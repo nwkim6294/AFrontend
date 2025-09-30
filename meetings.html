@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회의록 관리 - AI 회의록 서비스</title>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Sidebar Trigger Zone -->
+    <div class="sidebar-trigger"></div>
+    <!-- Sidebar (공통 불러오기) -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div id="meetingsPage" class="content-wrapper">
+        <div class="action-header">
+          <div class="page-header">
+            <h2>회의록 관리</h2>
+            <p>저장된 모든 회의록을 관리하세요</p>
+          </div>
+          <button class="cta-btn" style="background: #3b82f6; color: white;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14m-7-7h14" />
+            </svg>
+            새 회의록
+          </button>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-header-cell">날짜 / 시간</div>
+            <div class="table-header-cell">제목</div>
+            <div class="table-header-cell">참석자</div>
+            <div class="table-header-cell">시간</div>
+            <div class="table-header-cell">상태</div>
+          </div>
+
+          <!-- 샘플 데이터 -->
+          <div class="table-row">
+            <div class="table-cell">
+              <span class="cell-primary">09/29</span>
+              <span class="cell-secondary">14:00</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-primary">마케팅 전략 회의</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-secondary">3명</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-secondary">45분</span>
+            </div>
+            <div class="table-cell">
+              <span class="badge">완료</span>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="table-cell">
+              <span class="cell-primary">09/27</span>
+              <span class="cell-secondary">10:00</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-primary">개발팀 주간회의</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-secondary">4명</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-secondary">1시간 20분</span>
+            </div>
+            <div class="table-cell">
+              <span class="badge">완료</span>
+            </div>
+          </div>
+
+          <div class="table-row">
+            <div class="table-cell">
+              <span class="cell-primary">09/25</span>
+              <span class="cell-secondary">15:30</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-primary">프로젝트 킥오프</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-secondary">6명</span>
+            </div>
+            <div class="table-cell">
+              <span class="cell-secondary">2시간</span>
+            </div>
+            <div class="table-cell">
+              <span class="badge">완료</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <!-- 챗봇 컨테이너 -->
+      <div id="chatbot-container"></div>
+
+      <!-- 플로팅 버튼 -->
+      <button class="floating-chat-btn" id="floatingChatBtn">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 
+                 4V5a2 2 0 0 1 2-2h14a2 2 
+                 0 0 1 2 2z" />
+        </svg>
+      </button>
+    </main>
+  </div>
+
+
+  <script src="static/js/app.js"></script>
+  <script>
+        fetch("components/chatbot.html")
+      .then(res => res.text())
+      .then(html => {
+        const container = document.getElementById("chatbot-container");
+        container.innerHTML = html;
+
+        // DOM 바인딩
+        const closeBtn = container.querySelector(".close-chat-btn");
+        const sendBtn = container.querySelector(".send-btn");
+        const chatInput = container.querySelector("#chatInput");
+        const floatingBtn = document.getElementById("floatingChatBtn");
+
+        if (closeBtn) closeBtn.addEventListener("click", closeChat);
+        if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+        if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
+        if (floatingBtn) floatingBtn.addEventListener("click", openChat);
+      });
+
+  // 사이드바 로드 + active 처리
+  // 사이드바 로드 + active 처리
+  fetch("components/sidebar.html")
+    .then(res => res.text())
+    .then(html => {
+      const sidebar = document.getElementById("sidebar-container");
+      sidebar.innerHTML = html;
+      console.log("✅ sidebar.html 삽입 완료");
+
+      // 👉 현재 페이지 파일명 가져오기 (ex: meetings.html)
+      const currentPage = window.location.pathname.split("/").pop();
+
+      // 모든 nav-item 탐색
+      const navItems = sidebar.querySelectorAll(".nav-menu a");
+
+      navItems.forEach(item => {
+        const linkPath = item.getAttribute("href"); // ex: meetings.html
+        if (linkPath === currentPage) {
+          item.classList.add("active");   // 현재 페이지면 active 추가
+        } else {
+          item.classList.remove("active"); // 아니면 제거
+        }
+      });
+    });
+  </script>
+  <link rel="stylesheet" href="static/css/style.css">
+
+</body>
+</html>
