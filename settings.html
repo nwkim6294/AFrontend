@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>설정 - AI 회의록 서비스</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/settings.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar-trigger"></div>
+        <div id="sidebar-container"></div>
+
+        <main class="main-content">
+            <div class="settings-container">
+                <div class="page-header">
+                    <h2>설정</h2>
+                    <p>개인 정보와 서비스 환경을 관리하세요</p>
+                </div>
+
+                <!-- 메인 설정 메뉴 -->
+                <div id="settingsMenu" class="settings-menu">
+                    <div class="settings-menu-item" onclick="showPersonalInfo()">
+                        <div class="menu-item-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="menu-item-content">
+                            <h3>개인정보</h3>
+                            <p>기본 정보를 관리하세요</p>
+                        </div>
+                        <div class="menu-item-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="settings-menu-item" onclick="showDictionary()">
+                        <div class="menu-item-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
+                        <div class="menu-item-content">
+                            <h3>단어 사전</h3>
+                            <p>개발자 용어 사전 (검색 전용)</p>
+                        </div>
+                        <div class="menu-item-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="settings-menu-item" onclick="showHighlight()">
+                        <div class="menu-item-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2v20M2 12h20"/>
+                            </svg>
+                        </div>
+                        <div class="menu-item-content">
+                            <h3>하이라이트 기능</h3>
+                            <p>회의 중 중요 내용 표시 방식</p>
+                        </div>
+                        <div class="menu-item-arrow">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 개인정보 페이지 -->
+                <div id="personalInfoPage" class="settings-detail-page hidden">
+                    <button class="back-button" onclick="showMainMenu()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 18l-6-6 6-6"/>
+                        </svg>
+                        <span>설정으로 돌아가기</span>
+                    </button>
+
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                            <div class="section-title">
+                                <h3>개인정보</h3>
+                                <p>기본 정보를 관리하세요</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">이름</label>
+                            <input type="text" class="form-input" id="userName" placeholder="이름을 입력하세요" value="홍길동">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">이메일</label>
+                            <input type="email" class="form-input" id="userEmail" placeholder="example@email.com" value="hong@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">직무 선택</label>
+                            <select class="form-select" id="jobSelect">
+                                <option value="">직무를 선택하세요</option>
+                                <option value="developer">개발자</option>
+                                <option value="designer">디자이너</option>
+                                <option value="pm">프로젝트 매니저</option>
+                                <option value="marketer">마케터</option>
+                                <option value="sales">영업/세일즈</option>
+                            </select>
+                            <div class="keyword-tags" id="keywordTags"></div>
+                        </div>
+
+                        <button class="save-button" onclick="savePersonalInfo()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                            저장하기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 단어 사전 페이지 -->
+                <div id="dictionaryPage" class="settings-detail-page hidden">
+                    <button class="back-button" onclick="showMainMenu()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 18l-6-6 6-6"/>
+                        </svg>
+                        <span>설정으로 돌아가기</span>
+                    </button>
+
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                </svg>
+                            </div>
+                            <div class="section-title">
+                                <h3>단어 사전</h3>
+                                <p>개발자 용어 사전 (검색 전용)</p>
+                            </div>
+                        </div>
+
+                        <div class="dictionary-search">
+                            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <input type="text" class="form-input" id="dictionarySearch" placeholder="용어를 검색하세요">
+                        </div>
+
+                        <div class="dictionary-list" id="dictionaryList"></div>
+                    </div>
+                </div>
+
+                <!-- 하이라이트 기능 페이지 -->
+                <div id="highlightPage" class="settings-detail-page hidden">
+                    <button class="back-button" onclick="showMainMenu()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 18l-6-6 6-6"/>
+                        </svg>
+                        <span>설정으로 돌아가기</span>
+                    </button>
+
+                    <div class="settings-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2v20M2 12h20"/>
+                                </svg>
+                            </div>
+                            <div class="section-title">
+                                <h3>하이라이트 기능</h3>
+                                <p>회의 중 중요 내용 표시 방식</p>
+                            </div>
+                        </div>
+
+                        <div class="highlight-options">
+                            <div class="highlight-option active" data-value="before">
+                                <div class="highlight-option-title">회의 이전 설정</div>
+                                <div class="highlight-option-desc">회의 시작 전 미리 키워드를 설정합니다</div>
+                            </div>
+                            <div class="highlight-option" data-value="during">
+                                <div class="highlight-option-title">회의 도중 실시간</div>
+                                <div class="highlight-option-desc">회의 중 실시간으로 키워드를 표시합니다</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 24px;">
+                            <label class="form-label">하이라이트 키워드 (쉼표로 구분)</label>
+                            <input type="text" class="form-input" id="highlightKeywords" placeholder="예: 마감일, 액션아이템, 결정사항" value="마감일, 액션아이템, 결정사항">
+                        </div>
+
+                        <button class="save-button" onclick="saveHighlight()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                            저장하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="floating-chat-btn" id="floatingChatBtn">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </button>
+        </main>
+    </div>
+
+    <script src="static/js/app.js"></script>
+    <script src="static/js/settings.js"></script>
+    <script>
+        // 사이드바 로드
+        fetch("components/sidebar.html")
+            .then(res => res.text())
+            .then(html => {
+                const sidebar = document.getElementById("sidebar-container");
+                sidebar.innerHTML = html;
+                
+                const currentPage = window.location.pathname.split("/").pop();
+                const navItems = sidebar.querySelectorAll(".nav-menu a");
+                
+                navItems.forEach(item => {
+                    const linkPath = item.getAttribute("href");
+                    if (linkPath === currentPage) {
+                        item.classList.add("active");
+                    } else {
+                        item.classList.remove("active");
+                    }
+                });
+            });
+    </script>
+</body>
+</html>

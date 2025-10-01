@@ -1,0 +1,377 @@
+/* 설정 컨테이너 */
+.settings-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 0;
+}
+
+.page-header {
+    margin-bottom: 32px;
+}
+
+.page-header h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    color: #6b7280;
+    font-size: 16px;
+}
+
+/* 설정 메인 메뉴 */
+.settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-menu-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.settings-menu-item:hover {
+    border-color: #3b82f6;
+    background: #f9fafb;
+    transform: translateX(4px);
+}
+
+.menu-item-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+.menu-item-content {
+    flex: 1;
+}
+
+.menu-item-content h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.menu-item-content p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.menu-item-arrow {
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+/* 세부 페이지 */
+.settings-detail-page {
+    animation: slideIn 0.3s ease;
+}
+
+.settings-detail-page.hidden {
+    display: none;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin-bottom: 24px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.back-button:hover {
+    background: #f3f4f6;
+    color: #3b82f6;
+}
+
+/* 설정 섹션 */
+.settings-section {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.section-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    flex-shrink: 0;
+}
+
+.section-title h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.section-title p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* 폼 요소 */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 키워드 태그 */
+.keyword-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.keyword-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* 단어 사전 */
+.dictionary-search {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.dictionary-search input {
+    padding-left: 44px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.dictionary-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.dictionary-item {
+    padding: 20px;
+    border: 1px solid #f3f4f6;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+}
+
+.dictionary-item:hover {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+}
+
+.dictionary-term {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.dictionary-definition {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+/* 하이라이트 옵션 */
+.highlight-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.highlight-option {
+    padding: 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.highlight-option:hover {
+    border-color: #3b82f6;
+    background: #f9fafb;
+}
+
+.highlight-option.active {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.highlight-option-title {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 6px;
+    font-size: 15px;
+}
+
+.highlight-option-desc {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* 저장 버튼 */
+.save-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 32px;
+}
+
+.save-button:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.save-button:active {
+    transform: translateY(0);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .settings-container {
+        padding: 16px;
+    }
+
+    .settings-menu-item {
+        padding: 20px;
+    }
+
+    .menu-item-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .menu-item-content h3 {
+        font-size: 16px;
+    }
+
+    .highlight-options {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-section {
+        padding: 24px;
+    }
+}
