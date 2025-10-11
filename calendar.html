@@ -113,6 +113,15 @@
 
     <script src="static/js/app.js"></script>
     <script src="static/js/calendar.js"></script>
+
+    <script>
+        // 페이지 로드 시 캘린더 초기화
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCalendar);
+        } else {
+            initCalendar();
+        }
+    </script>
     
     <script>
         // 챗봇 로드
@@ -142,7 +151,7 @@
                 sidebar.innerHTML = html;
                 console.log("✅ sidebar.html 삽입 완료");
 
-                // 👉 현재 페이지 파일명 가져오기 (이 파일은 calendar.html입니다)
+                // 현재 페이지 파일명 가져오기 (이 파일은 calendar.html입니다)
                 const currentPage = window.location.pathname.split("/").pop(); // 결과: calendar.html
 
                 // 모든 nav-item 탐색

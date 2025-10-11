@@ -214,11 +214,11 @@
 }
 
 .meeting-card {
-    height: calc((100% - 24px) / 2 - 60px);  /* Todo 입력칸(48px) + 여백(12px) 만큼 줄임 */
+    height: calc((100% - 24px) / 2 - 60px);
 }
 
 .todo-card {
-    height: calc((100% - 24px) / 2);  /* 그만큼 늘림 */
+    height: calc((100% - 24px) / 2);
 }
 
 .meeting-card .card-header,
@@ -230,7 +230,7 @@
 }
 
 .meeting-card .card-header {
-    margin-bottom: 24px;  /* 또는 24px */
+    margin-bottom: 24px;
 }
 
 .todo-card .card-header {
@@ -373,12 +373,15 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 8px;
+    min-height: 0;
+    align-content: start;
 }
 
 .daily-events-section {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-height: 0;
 }
 
 .daily-events-section-title {
@@ -395,6 +398,8 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    overflow-y: auto;
+    max-height: 500px;
 }
 
 .daily-event-item {

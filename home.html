@@ -5,19 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI 회의록 서비스</title>
-
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="static/css/home.css">
 </head>
 
 <body>
   <div class="container">
-
 
     <!-- Sidebar Trigger Zone -->
     <div class="sidebar-trigger"></div>
 
     <!-- Sidebar (fetch로 불러올 자리) -->
     <div id="sidebar-container"></div>
-
 
     <!-- Main Content -->
     <main class="main-content">
@@ -38,7 +37,6 @@
             회의 만들기
           </button>
         </div>
-
 
         <div class="stats-grid">
           <div class="stat-card">
@@ -70,38 +68,118 @@
           <div class="stat-card">
             <div class="stat-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                <path d="M9 12l2 2 4-4" />
+                <circle cx="12" cy="12" r="10" />
               </svg>
             </div>
-            <div class="stat-label">평균 참석자</div>
+            <div class="stat-label">미결 액션아이템</div>
             <div class="stat-value-row">
-              <div class="stat-value">4.2명</div>
-              <div class="stat-change">+3%</div>
+              <div class="stat-value">7개</div>
+              <div class="stat-change">+2개</div>
             </div>
           </div>
           <div class="stat-card">
             <div class="stat-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
               </svg>
             </div>
-            <div class="stat-label">회의 효율성</div>
+            <div class="stat-label">확정된 주요결정사항</div>
             <div class="stat-value-row">
-              <div class="stat-value">92%</div>
-              <div class="stat-change">+5%</div>
+              <div class="stat-value">12건</div>
+              <div class="stat-change">+8%</div>
             </div>
           </div>
         </div>
 
+        <!-- 첫 번째 줄: 캘린더 + TODO -->
+        <div class="two-col-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">이번 달 일정</h3>
+              <a class="card-link" href="calendar.html">캘린더 보기</a>
+            </div>
+            <div class="calendar-header">
+              <div class="calendar-month">September 2025</div>
+            </div>
+            <div class="calendar-grid">
+              <div class="calendar-day-label">일</div>
+              <div class="calendar-day-label">월</div>
+              <div class="calendar-day-label">화</div>
+              <div class="calendar-day-label">수</div>
+              <div class="calendar-day-label">목</div>
+              <div class="calendar-day-label">금</div>
+              <div class="calendar-day-label">토</div>
 
+              <div class="calendar-day">1</div>
+              <div class="calendar-day">2</div>
+              <div class="calendar-day">3</div>
+              <div class="calendar-day">4</div>
+              <div class="calendar-day">5</div>
+              <div class="calendar-day">6</div>
+              <div class="calendar-day">7</div>
+              <div class="calendar-day">8</div>
+              <div class="calendar-day">9</div>
+              <div class="calendar-day has-event">10</div>
+              <div class="calendar-day">11</div>
+              <div class="calendar-day">12</div>
+              <div class="calendar-day">13</div>
+              <div class="calendar-day">14</div>
+              <div class="calendar-day has-event">15</div>
+              <div class="calendar-day">16</div>
+              <div class="calendar-day">17</div>
+              <div class="calendar-day">18</div>
+              <div class="calendar-day">19</div>
+              <div class="calendar-day has-event">20</div>
+              <div class="calendar-day">21</div>
+              <div class="calendar-day">22</div>
+              <div class="calendar-day">23</div>
+              <div class="calendar-day">24</div>
+              <div class="calendar-day">25</div>
+              <div class="calendar-day">26</div>
+              <div class="calendar-day has-event">27</div>
+              <div class="calendar-day">28</div>
+              <div class="calendar-day has-event">29</div>
+              <div class="calendar-day today">30</div>
+            </div>
+          </div>
 
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">To-Do</h3>
+            </div>
+            <div class="todo-list">
+              <div class="todo-item">
+                <input type="checkbox" class="todo-checkbox" id="todo1">
+                <label for="todo1" class="todo-label">메일 회신</label>
+              </div>
+              <div class="todo-item">
+                <input type="checkbox" class="todo-checkbox" id="todo2">
+                <label for="todo2" class="todo-label">보고서 초안 검토</label>
+              </div>
+              <div class="todo-item">
+                <input type="checkbox" class="todo-checkbox" id="todo3">
+                <label for="todo3" class="todo-label">팀 회의 자료 준비</label>
+              </div>
+              <div class="todo-item">
+                <input type="checkbox" class="todo-checkbox" id="todo4">
+                <label for="todo4" class="todo-label">클라이언트 미팅 일정 조율</label>
+              </div>
+              <div class="todo-item completed">
+                <input type="checkbox" class="todo-checkbox" id="todo5" checked>
+                <label for="todo5" class="todo-label">주간 보고서 제출</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 두 번째 줄: 최근 회의 + 다가오는 일정/마감일 -->
         <div class="two-col-grid">
           <div class="card">
             <div class="card-header">
               <h3 class="card-title">최근 회의</h3>
-              <a class="card-link">전체보기</a>
+              <a class="card-link" onclick="goToMeetings()">전체보기</a> 
             </div>
             <div>
               <div class="meeting-item">
@@ -166,56 +244,49 @@
 
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">이번 달 일정</h3>
-              <a class="card-link">캘린더 보기</a>
+              <h3 class="card-title">다가오는 일정/마감일</h3>
             </div>
-            <div class="calendar-header">
-              <div class="calendar-month">September 2025</div>
-            </div>
-            <div class="calendar-grid">
-              <div class="calendar-day-label">일</div>
-              <div class="calendar-day-label">월</div>
-              <div class="calendar-day-label">화</div>
-              <div class="calendar-day-label">수</div>
-              <div class="calendar-day-label">목</div>
-              <div class="calendar-day-label">금</div>
-              <div class="calendar-day-label">토</div>
-
-              <div class="calendar-day">1</div>
-              <div class="calendar-day">2</div>
-              <div class="calendar-day">3</div>
-              <div class="calendar-day">4</div>
-              <div class="calendar-day">5</div>
-              <div class="calendar-day">6</div>
-              <div class="calendar-day">7</div>
-              <div class="calendar-day">8</div>
-              <div class="calendar-day">9</div>
-              <div class="calendar-day has-event">10</div>
-              <div class="calendar-day">11</div>
-              <div class="calendar-day">12</div>
-              <div class="calendar-day">13</div>
-              <div class="calendar-day">14</div>
-              <div class="calendar-day has-event">15</div>
-              <div class="calendar-day">16</div>
-              <div class="calendar-day">17</div>
-              <div class="calendar-day">18</div>
-              <div class="calendar-day">19</div>
-              <div class="calendar-day has-event">20</div>
-              <div class="calendar-day">21</div>
-              <div class="calendar-day">22</div>
-              <div class="calendar-day">23</div>
-              <div class="calendar-day">24</div>
-              <div class="calendar-day">25</div>
-              <div class="calendar-day">26</div>
-              <div class="calendar-day has-event">27</div>
-              <div class="calendar-day">28</div>
-              <div class="calendar-day has-event">29</div>
-              <div class="calendar-day today">30</div>
+            <div class="deadline-list">
+              <div class="deadline-item urgent">
+                <div class="deadline-info">
+                  <div class="deadline-title">프로젝트 A 기획안 제출</div>
+                  <div class="deadline-meta">
+                    <span class="deadline-date">10/02 (수)</span>
+                    <span class="deadline-badge urgent">D-2</span>
+                  </div>
+                </div>
+              </div>
+              <div class="deadline-item">
+                <div class="deadline-info">
+                  <div class="deadline-title">월간 리뷰 미팅</div>
+                  <div class="deadline-meta">
+                    <span class="deadline-date">10/05 (금) 14:00</span>
+                    <span class="deadline-badge">D-5</span>
+                  </div>
+                </div>
+              </div>
+              <div class="deadline-item">
+                <div class="deadline-info">
+                  <div class="deadline-title">Q4 마케팅 전략 최종안 제출</div>
+                  <div class="deadline-meta">
+                    <span class="deadline-date">10/10 (화)</span>
+                    <span class="deadline-badge">D-10</span>
+                  </div>
+                </div>
+              </div>
+              <div class="deadline-item">
+                <div class="deadline-info">
+                  <div class="deadline-title">경쟁사 분석 보고</div>
+                  <div class="deadline-meta">
+                    <span class="deadline-date">10/10 (화)</span>
+                    <span class="deadline-badge">D-10</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
 
       <!-- 챗봇 컨테이너 -->
       <div id="chatbot-container"></div>
@@ -223,23 +294,21 @@
       <!-- 플로팅 버튼 -->
       <button class="floating-chat-btn" id="floatingChatBtn">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 
-                 4V5a2 2 0 0 1 2-2h14a2 2 
-                 0 0 1 2 2z" />
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
       </button>
     </main>
   </div>
+  
   <script src="static/js/app.js"></script>
+  <script src="static/js/home.js"></script>
   <script>
-
     fetch("components/chatbot.html")
       .then(res => res.text())
       .then(html => {
         const container = document.getElementById("chatbot-container");
         container.innerHTML = html;
 
-        // DOM 바인딩
         const closeBtn = container.querySelector(".close-chat-btn");
         const sendBtn = container.querySelector(".send-btn");
         const chatInput = container.querySelector("#chatInput");
@@ -251,35 +320,27 @@
         if (floatingBtn) floatingBtn.addEventListener("click", openChat);
       });
 
-
     fetch("components/sidebar.html")
       .then(res => res.text())
       .then(html => {
         const sidebar = document.getElementById("sidebar-container");
         sidebar.innerHTML = html;
-        console.log("✅ sidebar.html 삽입 완료");
 
-        // 👉 현재 페이지 파일명 가져오기 (ex: meetings.html)
         const currentPage = window.location.pathname.split("/").pop();
-
-        // 모든 nav-item 탐색
         const navItems = sidebar.querySelectorAll(".nav-menu a");
 
         navItems.forEach(item => {
-          const linkPath = item.getAttribute("href"); // ex: meetings.html
+          const linkPath = item.getAttribute("href");
           if (linkPath === currentPage) {
-            item.classList.add("active");   // 현재 페이지면 active 추가
+            item.classList.add("active");
           } else {
-            item.classList.remove("active"); // 아니면 제거
+            item.classList.remove("active");
           }
         });
       });
-
   </script>
 
-  <link rel="stylesheet" href="static/css/style.css">
-
-
+  <link rel="stylesheet" href="static/css/home.css">
 </body>
 
 </html>

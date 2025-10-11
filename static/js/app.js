@@ -100,3 +100,45 @@ function toggleRecording() {
         recordingAlert.classList.remove('active');
     }
 }
+
+// 페이지 전환 함수
+function showPage(pageName) {
+    // 모든 페이지 숨기기
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.add('hidden');
+    });
+    
+    // 선택한 페이지 보이기
+    const targetPage = document.getElementById(pageName + 'Page');
+    if (targetPage) {
+        targetPage.classList.remove('hidden');
+    }
+    
+    // 네비게이션 활성화 상태 변경
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    const activeNav = document.querySelector(`[data-page="${pageName}"]`);
+    if (activeNav) {
+        activeNav.classList.add('active');
+    }
+    
+    // 홈으로 돌아올 때 데이터 새로고침
+    if (pageName === 'home' && typeof window.refreshHomeData === 'function') {
+        window.refreshHomeData();
+    }
+    
+    // 캘린더로 이동할 때 초기화
+    if (pageName === 'calendar' && typeof initCalendar === 'function') {
+        initCalendar();
+    }
+}
+
+// 네비게이션 이벤트 리스너
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const pageName = item.getAttribute('data-page');
+        showPage(pageName);
+    });
+});

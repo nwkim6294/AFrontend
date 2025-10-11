@@ -1,0 +1,420 @@
+.card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 카드 헤더 */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.card-link {
+    font-size: 14px;
+    color: #3b82f6;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.card-link:hover {
+    color: #2563eb;
+}
+
+/* ============================================
+   첫 번째 줄: 이번 달 일정 + To-Do
+   ============================================ */
+
+/* 이번 달 일정 카드 - Todo보다 작게 */
+.two-col-grid:first-of-type > .card:first-child {
+    height: 310px !important;
+    overflow: hidden;
+    padding: 18px 20px 0px 20px !important;
+}
+
+/* To-Do 카드 - 캘린더와 동일한 크기 */
+.two-col-grid:first-of-type > .card:nth-child(2) {
+    height: 310px !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;  /*  명시적으로 지정 */
+}
+
+/* 캘린더 헤더 - 여백 줄이기 */
+.calendar-header {
+    text-align: center;
+    margin-bottom: 30px;
+    flex-shrink: 0;
+}
+
+.calendar-month {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* 캘린더 그리드 */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0;
+}
+
+/* 캘린더 요일 라벨 */
+.calendar-day-label {
+    padding: 3px 0;
+    font-weight: 600;
+    color: #9ca3af;
+    font-size: 11px;
+    text-align: center;
+    margin: 0;
+}
+
+/* 캘린더 날짜 셀 */
+.calendar-day {
+    padding: 0;
+    text-align: center;
+    font-size: 13px;
+    color: #374151;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    margin: 0 !important;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: normal;
+}
+
+.calendar-day:hover {
+    background: #f3f4f6;
+}
+
+.calendar-day.today {
+    background: #3b82f6;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.calendar-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: #10b981;
+    border-radius: 50%;
+}
+
+.calendar-day.today.has-event::after {
+    background: white;
+}
+
+.calendar-day.other-month {
+    color: #d1d5db;
+}
+
+/* ============================================
+   두 번째 줄: 최근 회의 + 다가오는 일정/마감일
+   ============================================ */
+
+/* 최근 회의 카드 */
+.two-col-grid:last-of-type > .card:first-child {
+    height: 380px;
+    overflow: hidden;
+}
+
+/* 다가오는 일정/마감일 카드 */
+.two-col-grid:last-of-type > .card:nth-child(2) {
+    height: 380px;
+    overflow: hidden;
+}
+
+/* ============================================
+   To-Do 스타일
+   ============================================ */
+
+/* TODO 추가 버튼 */
+.add-todo-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: #eff6ff;
+    color: #3b82f6;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-todo-btn:hover {
+    background: #dbeafe;
+    transform: scale(1.05);
+}
+
+/* 카드 헤더 - 높이 고정 */
+.two-col-grid:first-of-type > .card:nth-child(2) .card-header {
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+/* TODO 리스트 - 남은 공간 정확히 계산 */
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    height: 0;
+    flex-grow: 1;
+}
+
+/* TODO 아이템 */
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    min-height: 42px;
+}
+
+.todo-item:hover {
+    background: #f9fafb;
+}
+
+.todo-item.completed .todo-label {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.todo-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    appearance: none;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.todo-checkbox:checked {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.todo-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.todo-label {
+    flex: 1;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ============================================
+   최근 회의 스타일
+   ============================================ */
+
+.meeting-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.meeting-item:last-child {
+    border-bottom: none;
+}
+
+.meeting-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.meeting-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 14px;
+}
+
+.meeting-date {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.meeting-participants {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.meeting-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.badge {
+    padding: 3px 8px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.meeting-duration {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #6b7280;
+}
+
+/* ============================================
+   다가오는 일정/마감일 스타일
+   ============================================ */
+
+.deadline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.deadline-item {
+    padding: 12px;
+    border: 1px solid #f3f4f6;
+    border-radius: 12px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.deadline-item:hover {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.deadline-item.urgent {
+    border-color: #fecaca;
+    background: #fef2f2;
+}
+
+.deadline-item.urgent:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.deadline-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.deadline-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 14px;
+}
+
+.deadline-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.deadline-date {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.deadline-badge {
+    padding: 3px 8px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.deadline-badge.urgent {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ============================================
+   레이아웃 간격
+   ============================================ */
+
+.two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.two-col-grid + .two-col-grid {
+    margin-top: 24px;
+}
+
+/* ============================================
+   반응형
+   ============================================ */
+
+@media (max-width: 768px) {
+    .two-col-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .two-col-grid:first-of-type > .card:first-child,
+    .two-col-grid:first-of-type > .card:nth-child(2) {
+        height: auto;
+    }
+    
+    .two-col-grid:last-of-type > .card:first-child,
+    .two-col-grid:last-of-type > .card:nth-child(2) {
+        height: auto;
+    }
+}
