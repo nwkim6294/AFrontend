@@ -483,6 +483,10 @@
     background: #f9fafb;
     border-bottom: 1px solid #e5e7eb;
     flex-shrink: 0;
+    font-size: 20px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 24px;
 }
 
 .transcript-header h2 {
@@ -533,6 +537,8 @@
     padding: 16px;
     background: white;
     border: 1px solid #f3f4f6;
+    display: flex;
+    gap: 16px;
     border-radius: 10px;
     transition: all 0.2s;
 }
