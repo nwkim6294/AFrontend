@@ -27,7 +27,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #f9fafb; /* 기본 (대기 중) */
+  background: #f9fafb;
   padding: 10px 16px;
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -45,7 +45,7 @@
 
 .mic-icon {
   flex-shrink: 0;
-  color: #6b7280; /* 기본 회색 */
+  color: #6b7280;
 }
 
 /* 상태별 색상 */
@@ -135,7 +135,7 @@
   flex-direction: column;
   gap: 16px;
   min-height: 0;
-  max-height: calc(100vh - 220px); /* 상단 헤더 + 컨트롤 패널 고려 */
+  max-height: calc(100vh - 220px);
 }
 
 /* 커스텀 스크롤바 */
@@ -231,9 +231,6 @@
 }
 
 /* 접을 수 있는 카드 */
-/* .info-card-collapsible {
-    overflow: hidden;
-} */
 .info-card-collapsible {
   overflow: visible;
 }
@@ -241,19 +238,16 @@
     cursor: pointer;
     user-select: none;
     padding: 0px 0px 10px;
-    /* margin: -8px -12px; */
-    /* margin-bottom: 12px; */
-    /* border-radius: 8px; */
     transition: all 0.2s;
     border-bottom: 1px solid #e5e7eb;
 }
 
 .info-card-collapsible .info-header:hover {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(142, 68, 173, 0.05) 0%, rgba(125, 60, 152, 0.05) 100%);
 }
 
 .info-card-collapsible .info-header:active {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    background: linear-gradient(135deg, rgba(142, 68, 173, 0.1) 0%, rgba(125, 60, 152, 0.1) 100%);
     transform: scale(0.98);
 }
 
@@ -265,8 +259,8 @@
 
 .info-card-collapsible.collapsed:hover {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border-color: #3b82f6;
-    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.15);
+    border-color: #8E44AD;
+    box-shadow: 0 2px 12px rgba(142, 68, 173, 0.15);
 }
 
 .info-card-collapsible.collapsed .info-header {
@@ -282,7 +276,7 @@
 }
 
 .info-card-collapsible:hover .collapse-icon {
-    color: #3b82f6;
+    color: #8E44AD;
 }
 
 .info-card-collapsible.collapsed .collapse-icon {
@@ -291,28 +285,9 @@
 }
 
 .info-card-collapsible.collapsed:hover .collapse-icon {
-    color: #3b82f6;
+    color: #8E44AD;
 }
 
-/* .collapsible-content {
-    max-height: 1000px;
-    overflow: visible;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-                opacity 0.3s ease, 
-                margin-top 0.3s ease,
-                padding-top 0.3s ease;
-    opacity: 1;
-    margin-top: 12px;
-    padding-top: 0;
-}
-
-.info-card-collapsible.collapsed .collapsible-content {
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-    padding-top: 0;
-    overflow: hidden;
-} */
 .collapsible-content {
   max-height: 0;
   overflow: hidden;
@@ -321,7 +296,7 @@
 }
 
 .info-card-collapsible:not(.collapsed) .collapsible-content {
-  max-height: 600px; /* 내부 내용이 많을 경우 충분히 큰 값 */
+  max-height: 600px;
   opacity: 1;
   overflow: visible;
 }
@@ -349,7 +324,7 @@
     width: 24px;
     height: 24px;
     border-radius: 6px;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #8E44AD 0%, #7d3c98 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -402,15 +377,15 @@
 }
 
 .start-btn {
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #8E44AD 0%, #7d3c98 100%);
     color: white;
     border: none;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 2px 8px rgba(142, 68, 173, 0.3);
 }
 
 .start-btn:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #7d3c98 0%, #6b2f87 100%);
+    box-shadow: 0 4px 12px rgba(142, 68, 173, 0.4);
     transform: translateY(-1px);
 }
 
@@ -618,32 +593,32 @@
    키워드 하이라이트 색상 팔레트
 =================================*/
 .keyword-highlight-0 {
-  background-color: #fde68a; /* 노랑 */
+  background-color: #fde68a;
   color: #78350f;
 }
 
 .keyword-highlight-1 {
-  background-color: #bfdbfe; /* 하늘 */
+  background-color: #bfdbfe;
   color: #1e3a8a;
 }
 
 .keyword-highlight-2 {
-  background-color: #c7d2fe; /* 연보라 */
+  background-color: #c7d2fe;
   color: #3730a3;
 }
 
 .keyword-highlight-3 {
-  background-color: #fbcfe8; /* 핑크 */
+  background-color: #fbcfe8;
   color: #9d174d;
 }
 
 .keyword-highlight-4 {
-  background-color: #bbf7d0; /* 연초록 */
+  background-color: #bbf7d0;
   color: #14532d;
 }
 
 .keyword-highlight-5 {
-  background-color: #fed7aa; /* 주황 */
+  background-color: #fed7aa;
   color: #7c2d12;
 }
 
@@ -732,11 +707,11 @@
 
 .highlight-toast[data-color="1"] {
   border-color: #bfdbfe;
-  border-left-color: #3b82f6;
+  border-left-color: #8E44AD;
 }
 .highlight-toast[data-color="1"] .highlight-icon {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #e8d5f0;
+  color: #7d3c98;
 }
 
 .highlight-toast[data-color="2"] {
@@ -975,13 +950,13 @@
 }
 
 .btn-ok {
-  background: #6366f1;
+  background: #8E44AD;
   color: #fff;
   font-weight: 600;
 }
 
 .btn-ok:hover {
-  background: #4f46e5;
+  background: #7d3c98;
 }
 
 @keyframes fadeInScale {

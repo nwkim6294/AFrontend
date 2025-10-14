@@ -1,7 +1,6 @@
 /* ===============================
    기본 리셋 & 스크롤 허용
 ================================= */
-/* 회의 완료 페이지에서는 전체 스크롤 허용 */
 body {
   height: auto !important;
   overflow: auto !important;
@@ -86,11 +85,11 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: #eff6ff;
+  background: #f3e5f5;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #3b82f6;
+  color: #8E44AD;
 }
 
 /* ===============================
@@ -130,7 +129,7 @@ body {
 .summary-editor {
   width: 100%;
   padding: 12px;
-  border: 2px solid #3b82f6;
+  border: 2px solid #8E44AD;
   border-radius: 10px;
   font-size: 14px;
   line-height: 1.7;
@@ -140,7 +139,7 @@ body {
 
 .summary-editor:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
 }
 
 /* ===============================
@@ -155,9 +154,9 @@ body {
 
 .keyword-tag {
   padding: 6px 14px;
-  background: #eff6ff;
-  color: #3b82f6;
-  border: 1px solid #bfdbfe;
+  background: #f3e5f5;
+  color: #8E44AD;
+  border: 1px solid #d1a3e0;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
@@ -166,7 +165,7 @@ body {
 }
 
 .keyword-tag:hover {
-  background: #dbeafe;
+  background: #e8d5f0;
   transform: translateY(-1px);
 }
 
@@ -222,7 +221,7 @@ body {
 .transcript-text-editor {
   width: 100%;
   padding: 12px;
-  border: 2px solid #3b82f6;
+  border: 2px solid #8E44AD;
   border-radius: 8px;
   font-size: 15px;
   font-family: inherit;
@@ -234,7 +233,7 @@ body {
 
 .transcript-text-editor:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
 }
 
 .transcript-edit-actions {
@@ -253,19 +252,19 @@ body {
 
 .speaker-name {
   font-weight: 700;
-  color: #3b82f6;
+  color: #8E44AD;
   font-size: 14px;
   cursor: pointer;
   padding: 4px 10px;
   border-radius: 6px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: #f3e5f5;
+  border: 1px solid #d1a3e0;
   transition: all 0.2s;
 }
 
 .speaker-name:hover {
-  background: #dbeafe;
-  border-color: #93c5fd;
+  background: #e8d5f0;
+  border-color: #c499d3;
 }
 
 .speaker-name.mapped {
@@ -336,7 +335,7 @@ body {
 .info-input {
   width: 60%;
   padding: 6px 10px;
-  border: 2px solid #3b82f6;
+  border: 2px solid #8E44AD;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
@@ -345,7 +344,7 @@ body {
 
 .info-input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
 }
 
 /* ===============================
@@ -354,9 +353,9 @@ body {
 .view-chart-btn {
   width: 100%;
   padding: 12px;
-  background: #eff6ff;
-  color: #3b82f6;
-  border: 1px solid #bfdbfe;
+  background: #f3e5f5;
+  color: #8E44AD;
+  border: 1px solid #d1a3e0;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
@@ -369,8 +368,8 @@ body {
 }
 
 .view-chart-btn:hover {
-  background: #dbeafe;
-  border-color: #93c5fd;
+  background: #e8d5f0;
+  border-color: #c499d3;
 }
 
 .action-list {
@@ -432,8 +431,8 @@ body {
 .add-to-calendar-btn {
   padding: 6px 12px;
   background: white;
-  color: #3b82f6;
-  border: 1px solid #3b82f6;
+  color: #8E44AD;
+  border: 1px solid #8E44AD;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -446,7 +445,7 @@ body {
 }
 
 .add-to-calendar-btn:hover {
-  background: #eff6ff;
+  background: #f3e5f5;
 }
 
 .add-to-calendar-btn.added {
@@ -459,8 +458,8 @@ body {
   width: 100%;
   padding: 12px;
   background: white;
-  color: #3b82f6;
-  border: 2px dashed #bfdbfe;
+  color: #8E44AD;
+  border: 2px dashed #d1a3e0;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 600;
@@ -473,8 +472,8 @@ body {
 }
 
 .add-action-btn:hover {
-  background: #eff6ff;
-  border-color: #93c5fd;
+  background: #f3e5f5;
+  border-color: #c499d3;
 }
 
 /* ===============================
@@ -494,14 +493,14 @@ body {
 }
 
 .btn-primary {
-  background: #3b82f6;
+  background: #8E44AD;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #2563eb;
+  background: #7d3c98;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(142, 68, 173, 0.3);
 }
 
 .btn-secondary {
@@ -534,7 +533,7 @@ body {
 
 .btn-icon:hover {
   background: #f9fafb;
-  color: #3b82f6;
+  color: #8E44AD;
 }
 
 .btn-icon-small {
@@ -549,7 +548,7 @@ body {
 
 .btn-icon-small:hover {
   background: #f3f4f6;
-  color: #3b82f6;
+  color: #8E44AD;
 }
 
 .btn-icon-small.delete:hover {
@@ -557,9 +556,9 @@ body {
 }
 
 .btn-chart-mini {
-  background: #eff6ff;
-  color: #3b82f6;
-  border: 1px solid #bfdbfe;
+  background: #f3e5f5;
+  color: #8E44AD;
+  border: 1px solid #d1a3e0;
   padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
@@ -572,10 +571,10 @@ body {
 }
 
 .btn-chart-mini:hover {
-  background: #dbeafe;
-  border-color: #93c5fd;
+  background: #e8d5f0;
+  border-color: #c499d3;
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 6px rgba(142, 68, 173, 0.2);
 }
 
 .bottom-actions {
@@ -682,21 +681,21 @@ body {
 }
 
 .participant-item:hover {
-  background: #eff6ff;
-  border-color: #bfdbfe;
+  background: #f3e5f5;
+  border-color: #d1a3e0;
 }
 
 .participant-item.selected {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: #f3e5f5;
+  border-color: #8E44AD;
+  box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
 }
 
 .participant-avatar {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #8E44AD 0%, #7d3c98 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -723,8 +722,8 @@ body {
 }
 
 .participant-item.selected .participant-check {
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: #8E44AD;
+  border-color: #8E44AD;
 }
 
 /* ===============================
@@ -762,8 +761,8 @@ body {
 .action-form-group select:focus,
 .action-form-group textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #8E44AD;
+  box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
 }
 
 .action-form-row {
@@ -794,7 +793,7 @@ body {
 
 .chart-percentage {
   font-weight: 700;
-  color: #3b82f6;
+  color: #8E44AD;
 }
 
 .chart-bar-bg {
@@ -806,7 +805,7 @@ body {
 
 .chart-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(90deg, #8E44AD 0%, #7d3c98 100%);
   border-radius: 999px;
   transition: width 0.3s ease;
 }

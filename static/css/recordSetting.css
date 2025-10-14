@@ -1,20 +1,3 @@
-/* 페이지 헤더
-.page-header {
-    margin-bottom: 40px;
-}
-
-.page-header h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 8px;
-}
-
-.page-header p {
-    font-size: 15px;
-    color: #6b7280;
-} */
-
 /* 3단 그리드 레이아웃 */
 .setup-grid {
     display: grid;
@@ -35,12 +18,13 @@
 .card-icon {
     width: 44px;
     height: 44px;
-    background: #eff6ff;
+    background: #f3e5f5;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 16px;
+    color: #8E44AD;
 }
 
 /* 섹션 타이틀/설명 */
@@ -100,8 +84,8 @@
 
 .form-input:focus,
 .form-textarea:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #8E44AD;
+    box-shadow: 0 0 0 3px #e8d5f0;
 }
 
 .form-input.error,
@@ -123,7 +107,7 @@
 .add-participant-btn,
 .add-keyword-btn {
     padding: 11px 18px;
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     border: none;
     border-radius: 8px;
@@ -136,7 +120,7 @@
 
 .add-participant-btn:hover,
 .add-keyword-btn:hover {
-    background: #2563eb;
+    background: #7d3c98;
 }
 
 .participants-list {
@@ -166,7 +150,7 @@
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    background: linear-gradient(135deg, #8E44AD 0%, #7d3c98 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -224,9 +208,9 @@
     align-items: center;
     gap: 6px;
     padding: 7px 12px;
-    background: #eff6ff;
-    color: #3b82f6;
-    border: 1px solid #bfdbfe;
+    background: #f3e5f5;
+    color: #8E44AD;
+    border: 1px solid #d1a3e0;
     border-radius: 999px;
     font-size: 13px;
     font-weight: 500;
@@ -234,7 +218,7 @@
 }
 
 .keyword-tag:hover {
-    background: #dbeafe;
+    background: #e8d5f0;
 }
 
 /* 마이크 테스트 */
@@ -247,8 +231,8 @@
 .mic-test-btn {
     padding: 11px 18px;
     background: white;
-    color: #3b82f6;
-    border: 1px solid #3b82f6;
+    color: #8E44AD;
+    border: 1px solid #8E44AD;
     border-radius: 8px;
     font-weight: 600;
     font-size: 14px;
@@ -261,7 +245,7 @@
 }
 
 .mic-test-btn:hover {
-    background: #eff6ff;
+    background: #f3e5f5;
 }
 
 .mic-test-btn.testing {
@@ -292,7 +276,7 @@
 
 .mic-level-bar {
     height: 100%;
-    background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #ef4444 100%);
+    background: linear-gradient(90deg, #10b981 0%, #8E44AD 50%, #ef4444 100%);
     width: 0%;
     transition: width 0.1s;
     border-radius: 4px;
@@ -309,7 +293,7 @@
 
 .btn-primary {
     padding: 12px 28px;
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     border: none;
     border-radius: 8px;
@@ -320,9 +304,9 @@
 }
 
 .btn-primary:hover {
-    background: #2563eb;
+    background: #7d3c98;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 4px 12px rgba(142, 68, 173, 0.25);
 }
 
 .btn-secondary {

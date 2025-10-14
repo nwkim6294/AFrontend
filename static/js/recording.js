@@ -39,6 +39,7 @@ fetch("components/sidebar.html")
       }
     });
   });
+
     function openConfirmModal(title, message, onConfirm) {
     const modal = document.getElementById('confirmModal');
     const titleEl = document.getElementById('confirmTitle');

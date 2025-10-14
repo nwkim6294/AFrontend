@@ -1,5 +1,3 @@
-let isRecording = false;
-
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     sidebar.classList.toggle('collapsed');
@@ -56,50 +54,6 @@ function handleChatEnter(event) {
     }
 }
 
-function toggleRecording() {
-    isRecording = !isRecording;
-    const recordBtn = document.getElementById('recordBtn');
-    const recordingAlert = document.getElementById('recordingAlert');
-    
-    if (isRecording) {
-        recordBtn.classList.add('recording');
-        recordBtn.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="6" y="6" width="12" height="12" rx="2"/>
-            </svg>
-            녹음 중지
-        `;
-        recordingAlert.classList.add('active');
-        
-        // Simulate adding new transcript
-        setTimeout(() => {
-            const transcriptList = document.getElementById('transcriptList');
-            const newItem = document.createElement('div');
-            newItem.className = 'transcript-item';
-            newItem.innerHTML = `
-                <div class="speaker-avatar">박</div>
-                <div class="transcript-content">
-                    <div class="transcript-meta">
-                        <span class="speaker-name">박지민</span>
-                        <span class="timestamp">01:20</span>
-                    </div>
-                    <p class="transcript-text">추가로 논의할 사항이 있습니다.</p>
-                </div>
-            `;
-            transcriptList.appendChild(newItem);
-        }, 2000);
-    } else {
-        recordBtn.classList.remove('recording');
-        recordBtn.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            </svg>
-            녹음 시작
-        `;
-        recordingAlert.classList.remove('active');
-    }
-}
 
 // 페이지 전환 함수
 function showPage(pageName) {
