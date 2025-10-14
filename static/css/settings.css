@@ -41,7 +41,7 @@
 }
 
 .settings-menu-item:hover {
-    border-color: #3b82f6;
+    border-color: #8E44AD;
     background: #f9fafb;
     transform: translateX(4px);
 }
@@ -50,11 +50,11 @@
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: #eff6ff;
+    background: #f3e5f5;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #3b82f6;
+    color: #8E44AD;
     flex-shrink: 0;
 }
 
@@ -118,7 +118,7 @@
 
 .back-button:hover {
     background: #f3f4f6;
-    color: #3b82f6;
+    color: #8E44AD;
 }
 
 /* 설정 섹션 */
@@ -142,11 +142,11 @@
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: #eff6ff;
+    background: #f3e5f5;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #3b82f6;
+    color: #8E44AD;
     flex-shrink: 0;
 }
 
@@ -190,8 +190,8 @@
 
 .form-input:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #8E44AD;
+    box-shadow: 0 0 0 3px #e8d5f0;
 }
 
 .form-select {
@@ -207,8 +207,8 @@
 
 .form-select:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #8E44AD;
+    box-shadow: 0 0 0 3px #e8d5f0;
 }
 
 /* 키워드 태그 */
@@ -224,8 +224,8 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    background: #eff6ff;
-    color: #3b82f6;
+    background: #f3e5f5;
+    color: #8E44AD;
     border-radius: 6px;
     font-size: 13px;
     font-weight: 500;
@@ -297,13 +297,13 @@
 }
 
 .highlight-option:hover {
-    border-color: #3b82f6;
+    border-color: #8E44AD;
     background: #f9fafb;
 }
 
 .highlight-option.active {
-    border-color: #3b82f6;
-    background: #eff6ff;
+    border-color: #8E44AD;
+    background: #f3e5f5;
 }
 
 .highlight-option-title {
@@ -327,7 +327,7 @@
     gap: 8px;
     width: 100%;
     padding: 14px;
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     border: none;
     border-radius: 8px;
@@ -339,9 +339,9 @@
 }
 
 .save-button:hover {
-    background: #2563eb;
+    background: #7d3c98;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 12px #d1a3e0;
 }
 
 .save-button:active {

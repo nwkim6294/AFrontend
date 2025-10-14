@@ -119,7 +119,7 @@
 }
 
 .calendar-day-cell.today .day-number {
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     border-radius: 999px;
     width: 28px;
@@ -133,8 +133,8 @@
 }
 
 .calendar-day-cell.selected {
-    background: #eff6ff;
-    border: 2px solid #3b82f6;
+    background: #f3e5f5;
+    border: 2px solid #8E44AD;
     padding: 7px;
 }
 

@@ -21,8 +21,8 @@
 
 .search-toggle-btn:hover {
     background: #f9fafb;
-    border-color: #3b82f6;
-    color: #3b82f6;
+    border-color: #8E44AD;
+    color: #8E44AD;
 }
 
 /* 검색 패널 */
@@ -51,7 +51,7 @@
 }
 
 .search-input-wrapper:focus-within {
-    border-color: #3b82f6;
+    border-color: #8E44AD;
     background: white;
 }
 
@@ -120,12 +120,12 @@
 }
 
 .filter-select:hover {
-    border-color: #3b82f6;
+    border-color: #8E44AD;
 }
 
 .filter-select:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #8E44AD;
+    box-shadow: 0 0 0 3px #e8d5f0;
 }
 
 /* 우선순위 선택 */
@@ -173,8 +173,8 @@
 .keyword-tag {
     display: inline-block;
     padding: 4px 10px;
-    background: #eff6ff;
-    color: #3b82f6;
+    background: #f3e5f5;
+    color: #8E44AD;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;

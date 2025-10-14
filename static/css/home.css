@@ -24,14 +24,14 @@
 
 .card-link {
     font-size: 14px;
-    color: #3b82f6;
+    color: #8E44AD;
     text-decoration: none;
     cursor: pointer;
     transition: color 0.2s;
 }
 
 .card-link:hover {
-    color: #2563eb;
+    color: #7d3c98;
 }
 
 /* ============================================
@@ -110,10 +110,10 @@
 }
 
 .calendar-day.today {
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     font-weight: 600;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 2px 4px #d1a3e0;
 }
 
 .calendar-day.has-event::after {
@@ -162,8 +162,8 @@
     height: 32px;
     border-radius: 8px;
     border: none;
-    background: #eff6ff;
-    color: #3b82f6;
+    background: #f3e5f5;
+    color: #8E44AD;
     font-size: 20px;
     font-weight: 600;
     cursor: pointer;
@@ -174,7 +174,7 @@
 }
 
 .add-todo-btn:hover {
-    background: #dbeafe;
+    background: #e8d5f0;
     transform: scale(1.05);
 }
 
@@ -230,8 +230,8 @@
 }
 
 .todo-checkbox:checked {
-    background: #3b82f6;
-    border-color: #3b82f6;
+    background: #8E44AD;
+    border-color: #8E44AD;
 }
 
 .todo-checkbox:checked::after {
@@ -298,8 +298,8 @@
 
 .badge {
     padding: 3px 8px;
-    background: #eff6ff;
-    color: #3b82f6;
+    background: #f3e5f5;
+    color: #8E44AD;
     border-radius: 12px;
     font-size: 11px;
     font-weight: 600;
@@ -373,8 +373,8 @@
 
 .deadline-badge {
     padding: 3px 8px;
-    background: #eff6ff;
-    color: #3b82f6;
+    background: #f3e5f5;
+    color: #8E44AD;
     border-radius: 12px;
     font-size: 11px;
     font-weight: 600;

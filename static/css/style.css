@@ -19,6 +19,12 @@ body {
     transition: margin-right 0.3s ease;
 }
 
+.logo-image {
+    width: 40px;   /* 기존 logo-icon과 동일한 크기 */
+    height: 40px;
+    object-fit: contain;
+}
+
 /* Sidebar */
 /* Sidebar (숨김 기본값) */
 .sidebar {
@@ -168,8 +174,8 @@ body {
 }
 
 .nav-item.active {
-    background: #eff6ff;
-    color: #3b82f6;
+    background: #f3e5f5;
+    color: #8E44AD;
 }
 
 .sidebar.collapsed .nav-item span {
@@ -224,18 +230,18 @@ body {
 }
 
 .stat-card:hover {
-    border-color: #bfdbfe;
+    border-color: #d1a3e0;
 }
 
 .stat-icon {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: #eff6ff;
+    background: #f3e5f5;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #3b82f6;
+    color: #8E44AD;
     margin-bottom: 16px;
 }
 
@@ -258,14 +264,14 @@ body {
 }
 
 .stat-change {
-    color: #3b82f6;
+    color: #8E44AD;
     font-size: 14px;
     font-weight: 500;
 }
 
 /* CTA Banner */
 .cta-banner {
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     padding: 32px;
     border-radius: 16px;
@@ -279,14 +285,14 @@ body {
 }
 
 .cta-banner p {
-    color: rgba(255, 255, 255, 0.9);
+    color: white;
     margin-bottom: 24px;
     font-size: 16px;
 }
 
 .cta-btn {
     background: white;
-    color: #3b82f6;
+    color: #8E44AD;
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -311,7 +317,7 @@ body {
     height: 100vh;
     background: white;
     border-left: 1px solid #e5e7eb;
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+    box-shadow: -4px 0 24px #e5e5e5;
     transition: width 0.3s;
     width: 0;
     overflow: hidden;
@@ -348,7 +354,7 @@ body.chat-open .main-content {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: #3b82f6;
+    background: #8E44AD;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -425,7 +431,7 @@ body.chat-open .main-content {
 }
 
 .message.user .message-bubble {
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
 }
 
@@ -451,12 +457,12 @@ body.chat-open .main-content {
 }
 
 .chat-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: #8E44AD;
+    box-shadow: 0 0 0 3px #e8d5f0;
 }
 
 .send-btn {
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     padding: 10px;
     border: none;
@@ -469,7 +475,7 @@ body.chat-open .main-content {
 }
 
 .send-btn:hover {
-    background: #2563eb;
+    background: #8E44AD;
 }
 
 /* Floating Chat Button */
@@ -479,11 +485,11 @@ body.chat-open .main-content {
     right: 32px;
     width: 56px;
     height: 56px;
-    background: #3b82f6;
+    background: #8E44AD;
     color: white;
     border: none;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 8px 24px #d1a3e0;
     cursor: pointer;
     transition: all 0.2s;
     z-index: 40;
@@ -493,7 +499,7 @@ body.chat-open .main-content {
 }
 
 .floating-chat-btn:hover {
-    background: #2563eb;
+    background: #8E44AD;
     transform: scale(1.05);
 }
 
@@ -531,11 +537,11 @@ body.chat-open .main-content {
 }
 
 .record-btn:not(.recording) {
-    background: #3b82f6;
+    background: #8E44AD;
 }
 
 .record-btn:not(.recording):hover {
-    background: #2563eb;
+    background: #8E44AD;
 }
 
 .recording-alert {
@@ -619,7 +625,7 @@ body.chat-open .main-content {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: #3b82f6;
+    background: #8E44AD;
     display: flex;
     align-items: center;
     justify-content: center;
