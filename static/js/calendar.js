@@ -192,8 +192,9 @@ function initCalendar() {
             calendarGrid.appendChild(dayCell);
         }
         
+        // 다음 달 날짜 채우기
         const totalCells = calendarGrid.children.length;
-        const remainingCells = 7 - (totalCells % 7);
+        const remainingCells = 7 - ((totalCells - 7) % 7);
         
         if (remainingCells < 7) {
             for (let i = 1; i <= remainingCells; i++) {
@@ -206,6 +207,12 @@ function initCalendar() {
                 calendarGrid.appendChild(dayCell);
             }
         }
+        
+        // 마지막에 총 행 개수 계산
+        const totalRows = Math.ceil((calendarGrid.children.length - 7) / 7); // 요일 라벨 제외
+        
+        // 동적으로 grid-template-rows 설정
+        calendarGrid.style.gridTemplateRows = `auto repeat(${totalRows}, 1fr)`;
     }
 
     function selectDay(dateString) {
