@@ -259,7 +259,6 @@ body {
     justify-content: flex-start;
 }
 
-
 .chat-messages {
     flex: 1;
     display: flex;
@@ -342,17 +341,6 @@ body {
     animation-delay: 0.4s;
 }
 
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
 .mic-icon {
     position: absolute;
     bottom: 20px;
@@ -371,83 +359,6 @@ body {
 @keyframes micPulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.1); }
-}
-
-/* 사람 일러스트
-.person-illustration {
-    position: absolute;
-    bottom: -50px;
-    left: -100px;
-    width: 100px;
-    height: 140px;
-    animation: personFloat 3s ease-in-out infinite;
-}
-
-@keyframes personFloat {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-}
-
-.person {
-    position: relative;
-}
-
-.person-head {
-    width: 35px;
-    height: 35px;
-    background: #88529f;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 35px;
-}
-
-.person-body {
-    width: 45px;
-    height: 60px;
-    background: #6b3482;
-    border-radius: 22px 22px 5px 5px;
-    position: absolute;
-    top: 33px;
-    left: 30px;
-}
-
-.person-arm {
-    width: 30px;
-    height: 10px;
-    background: #88529f;
-    border-radius: 10px;
-    position: absolute;
-    top: 45px;
-    right: -5px;
-    transform: rotate(-30deg);
-    animation: armWave 2s ease-in-out infinite;
-}
-
-@keyframes armWave {
-    0%, 100% { transform: rotate(-30deg); }
-    50% { transform: rotate(-10deg); }
-}
-
-.person-key {
-    width: 22px;
-    height: 26px;
-    background: #85929E;
-    border-radius: 5px;
-    position: absolute;
-    top: 35px;
-    right: -30px;
-    animation: keyFloat 2s ease-in-out infinite;
-} */
-
-@keyframes keyFloat {
-    0%, 100% { transform: translateY(0px) rotate(-10deg); }
-    50% { transform: translateY(-8px) rotate(-10deg); }
-}
-
-@keyframes leafSway {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(5deg); }
 }
 
 /* 브랜드 텍스트 */
@@ -500,7 +411,6 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* 새로 추가 */
 .auth-container.signup-mode {
     transform: translateY(-60px);
 }
@@ -711,11 +621,12 @@ input[type="checkbox"] {
 
 .social-buttons {
     display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
 .btn-social {
-    flex: 1;
+    width: 100%;
     padding: 12px;
     border: 2px solid #E8E8E8;
     background: white;
@@ -728,6 +639,7 @@ input[type="checkbox"] {
     gap: 8px;
     font-weight: 600;
     color: #5F6368;
+    font-size: 15px;
 }
 
 .btn-social:hover {
@@ -735,26 +647,27 @@ input[type="checkbox"] {
     background: #F8F9FA;
 }
 
+/* 카카오 버튼 전용 스타일 */
+.btn-social.kakao {
+    background: #FEE500;
+    border-color: #FEE500;
+    color: #3C1E1E;
+}
+
+.btn-social.kakao:hover {
+    background: #F5DC00;
+    border-color: #F5DC00;
+}
+
 .btn-social img {
     width: 20px;
     height: 20px;
 }
 
-/* 반응형 */
-@media (max-width: 1024px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-    
-    .left-panel {
-        display: none;
-    }
-}
-
 /* 팝업 알림 메시지 */
 .alert {
     position: absolute;
-    top: 95px;  /* 탭 아래 위치 (Welcome 텍스트 + 탭 높이) */
+    top: 95px;
     left: 0;
     right: 0;
     padding: 12px 16px;
@@ -765,18 +678,6 @@ input[type="checkbox"] {
     display: none;
     z-index: 1000;
     margin: 0;
-    animation: none;
-}
-
-@keyframes slideInRight {
-    from {
-        transform: translateX(400px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
 }
 
 .alert.show {
@@ -792,6 +693,7 @@ input[type="checkbox"] {
 .alert-error::before {
     content: '⚠️';
     font-size: 20px;
+    margin-right: 8px;
 }
 
 .alert-success {
@@ -804,4 +706,32 @@ input[type="checkbox"] {
     content: '✓';
     font-size: 20px;
     font-weight: bold;
+    margin-right: 8px;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+    
+    .left-panel {
+        display: none;
+    }
+}
+/* 카카오 버튼 전용 스타일 */
+.btn-social.kakao {
+    background: #FEE500;
+    border-color: #FEE500;
+    color: #3C1E1E;
+}
+
+.btn-social.kakao:hover {
+    background: #F5DC00;
+    border-color: #F5DC00;
+}
+
+.btn-social img {
+    width: 20px;
+    height: 20px;
 }
