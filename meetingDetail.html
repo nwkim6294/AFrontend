@@ -1,239 +1,355 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>회의록 상세 - AI 회의록 서비스</title>
-  <link rel="stylesheet" href="static/css/style.css">
-  <link rel="stylesheet" href="static/css/meetingDetail.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회의록 상세 - AI 회의록 서비스</title>
+    <link rel="stylesheet" href="./static/css/style.css">
+    <link rel="stylesheet" href="./static/css/recordFinish.css">
+    <link rel="stylesheet" href="./static/css/meetingDetail.css">
 </head>
-
 <body>
-  <div class="container">
+    <div class="container">
+        <!-- Sidebar Trigger Zone -->
+        <div class="sidebar-trigger"></div>
 
-    <!-- Sidebar Trigger Zone -->
-    <div class="sidebar-trigger"></div>
+        <!-- Sidebar -->
+        <div id="sidebar-container"></div>
 
-    <!-- Sidebar (fetch로 불러올 자리) -->
-    <div id="sidebar-container"></div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="recordFinish" class="content-wrapper">
+                
+                <!-- 헤더 -->
+                <div class="rcf-header">
+                    <div class="rcf-header-top">
+                        <div class="page-header">
+                            <h2 class="meeting-title" id="meetingTitle">마케팅 전략 회의</h2>
+                        </div>
+                        <div class="header-actions">
+                            <button class="action-btn secondary" onclick="goToEdit()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                                수정
+                            </button>
+                            <button class="action-btn primary" onclick="exportPDF()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                PDF 다운로드
+                            </button>
+                        </div>
+                    </div>
+                    <div class="meeting-meta">
+                        <div class="meta-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            <span id="meetingDate">2025.10.10 14:00</span>
+                        </div>
+                        <div class="meta-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span id="meetingDuration">00:45:23</span>
+                        </div>
+                        <div class="meta-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            <span id="participantCount">3명 참석</span>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="content-wrapper">
-        <!-- 헤더 -->
-        <div class="detail-header">
-          <button class="back-btn" onclick="goBack()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            뒤로가기
-          </button>
-          <div class="detail-actions">
-            <button class="action-btn secondary" id="editToggleBtn" onclick="toggleEdit()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-              </svg>
-              수정
+                <!-- 메인 레이아웃 -->
+                <div class="rf-main-wrapper">
+                    <!-- 메인 컨텐츠: 실시간 변환 로그 -->
+                    <div class="main-area">
+                        <div class="area-header">
+                            <h2 class="area-title">회의 내용</h2>
+                        </div>
+
+                        <div class="transcript-area">
+                            <div class="transcript-list" id="transcriptList">
+                                <!-- 발화 로그가 동적으로 추가됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 사이드바 -->
+                    <div class="content-sidebar">
+                        <!-- AI 요약 -->
+                        <div class="sidebar-section">
+                            <h3 class="sidebar-title">AI 요약</h3>
+
+                            <div class="summary-block">
+                                <div class="summary-label">회의 목적</div>
+                                <div class="summary-text">Q4 마케팅 전략 수립 및 예산 배분 논의</div>
+                            </div>
+
+                            <div class="summary-block">
+                                <div class="summary-label">주요 안건</div>
+                                <div class="summary-text">Q3 성과 리뷰, Q4 목표 수립, 예산 배분, 캠페인 일정</div>
+                            </div>
+
+                            <div class="summary-block">
+                                <div class="summary-label">전체 요약</div>
+                                <div class="summary-text">이번 회의에서는 Q3 마케팅 성과를 검토하고 Q4 전략을 수립했습니다. 디지털 채널의 우수한 성과를 바탕으로 예산을 재배분하고, 10월 중순부터 주요 캠페인을 시작하기로 결정했습니다.</div>
+                            </div>
+
+                            <div class="summary-block">
+                                <div class="summary-label">회의 중요도</div>
+                                <div class="summary-text importance-text">높음</div>
+                            </div>
+                        </div>
+
+                        <!-- 하이라이트 키워드 -->
+                        <div class="sidebar-section">
+                            <h3 class="sidebar-title">하이라이트 키워드</h3>
+                            <div class="keyword-search-box">
+                                <input type="text" id="keywordSearchInput" class="keyword-search-input" placeholder="키워드 검색...">
+                                <button class="keyword-search-btn" onclick="searchKeyword()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="m21 21-4.35-4.35"/>
+                                    </svg>
+                                </button>
+                                <button class="keyword-clear-btn hidden" onclick="clearKeywordSearch()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="keywords">
+                                <div class="keyword" onclick="quickSearchKeyword('마케팅')">#마케팅</div>
+                                <div class="keyword" onclick="quickSearchKeyword('전략')">#전략</div>
+                                <div class="keyword" onclick="quickSearchKeyword('Q4')">#Q4</div>
+                                <div class="keyword" onclick="quickSearchKeyword('예산')">#예산</div>
+                            </div>
+                        </div>
+
+                        <!-- 액션 아이템 (읽기 전용) -->
+                        <div class="sidebar-section">
+                            <h3 class="sidebar-title">액션 아이템</h3>
+                            <div id="actionList">
+                                <div class="action-item">
+                                    <div class="action-header">
+                                        <div class="action-title">상세 예산안 작성</div>
+                                    </div>
+                                    <div class="action-meta">담당: 김명희 · 10/5까지</div>
+                                </div>
+
+                                <div class="action-item">
+                                    <div class="action-header">
+                                        <div class="action-title">캠페인 기획서 제출</div>
+                                    </div>
+                                    <div class="action-meta">담당: 박지민 · 10/8까지</div>
+                                </div>
+
+                                <div class="action-item">
+                                    <div class="action-header">
+                                        <div class="action-title">경쟁사 분석 보고</div>
+                                    </div>
+                                    <div class="action-meta">담당: 홍길동 · 10/10까지</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 챗봇 컨테이너 -->
+            <div id="chatbot-container"></div>
+
+            <!-- 플로팅 버튼 -->
+            <button class="floating-chat-btn" id="floatingChatBtn">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
             </button>
-            <button class="action-btn primary" onclick="exportToPDF()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              PDF 다운로드
-            </button>
-          </div>
-        </div>
+        </main>
+    </div>
+    
+    <script src="./static/js/app.js"></script>
+    <script src="./static/js/meetingDetail.js"></script>
+    <script>
+        // 더미 데이터 (나중에 DB에서 가져올 데이터)
+        var mockTranscripts = [
+            { speaker: "홍길동", initial: "홍", timestamp: "00:00:15", text: "이번 분기 마케팅 전략에 대해 논의하겠습니다. Q4 예산 배분과 캠페인 일정을 확정해야 합니다." },
+            { speaker: "김명희", initial: "김", timestamp: "00:01:30", text: "Q3 캠페인 ROI가 목표 대비 15% 상승했습니다. 디지털 마케팅 전략이 효과적이었습니다." },
+            { speaker: "박지민", initial: "박", timestamp: "00:02:45", text: "Q4 예산은 디지털 60%, 오프라인 40%로 배분하겠습니다. 마케팅 채널별 전략도 수립했습니다." },
+            { speaker: "홍길동", initial: "홍", timestamp: "00:04:20", text: "좋습니다. Q4 목표 달성을 위해 10월 중순부터 주요 캠페인을 시작하겠습니다." },
+            { speaker: "김명희", initial: "김", timestamp: "00:05:50", text: "예산 배정 세부 내역은 다음 주까지 정리해서 공유하겠습니다." },
+            { speaker: "박지민", initial: "박", timestamp: "00:07:15", text: "캠페인 기획서는 언제까지 제출하면 될까요?" },
+            { speaker: "홍길동", initial: "홍", timestamp: "00:08:30", text: "다음 주 금요일까지 제출해주시면 됩니다." },
+            { speaker: "김명희", initial: "김", timestamp: "00:09:45", text: "경쟁사 마케팅 동향도 분석해서 포함하겠습니다." },
+            { speaker: "박지민", initial: "박", timestamp: "00:11:20", text: "SNS 마케팅 예산을 좀 더 늘려야 할 것 같습니다." },
+            { speaker: "홍길동", initial: "홍", timestamp: "00:12:50", text: "그 부분은 다시 검토해보겠습니다. Q4 전략 회의를 한 번 더 잡죠." },
+            { speaker: "김명희", initial: "김", timestamp: "00:14:10", text: "네, 알겠습니다. 데이터 분석 자료도 준비하겠습니다." },
+            { speaker: "박지민", initial: "박", timestamp: "00:15:30", text: "인플루언서 마케팅도 고려해볼 만할 것 같습니다." },
+            { speaker: "홍길동", initial: "홍", timestamp: "00:16:45", text: "좋은 의견입니다. 예산안에 반영하도록 하겠습니다." },
+            { speaker: "김명희", initial: "김", timestamp: "00:18:00", text: "그럼 이번 주 안에 1차 예산안을 완성하겠습니다." },
+            { speaker: "박지민", initial: "박", timestamp: "00:19:20", text: "캠페인 일정표도 함께 작성하겠습니다." },
+            { speaker: "홍길동", initial: "홍", timestamp: "00:20:40", text: "네, 수고하셨습니다. 다음 회의 때 뵙겠습니다." }
+        ];
 
-        <!-- 회의 정보 카드 -->
-        <div class="meeting-info-card">
-          <div class="meeting-info-header">
-            <div>
-              <h1 class="meeting-detail-title" id="meetingTitle">마케팅 전략 회의</h1>
-              <div class="meeting-meta">
-                <span class="meta-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <path d="M16 2v4M8 2v4M3 10h18" />
-                  </svg>
-                  2025년 9월 29일 14:00
-                </span>
-                <span class="meta-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
-                  45분
-                </span>
-                <span class="meta-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                  </svg>
-                  3명 참석
-                </span>
-              </div>
-            </div>
-            <select class="priority-select-large high" id="prioritySelect">
-              <option value="high" selected>높음</option>
-              <option value="medium">보통</option>
-              <option value="low">낮음</option>
-            </select>
-          </div>
-        </div>
+        // 페이지 로드 시 발화 로그 렌더링
+        function renderTranscripts() {
+            var transcriptList = document.getElementById('transcriptList');
+            
+            mockTranscripts.forEach(function(item) {
+                var transcriptItem = document.createElement('div');
+                transcriptItem.className = 'transcript-item';
+                transcriptItem.innerHTML = 
+                    '<div class="speaker-avatar-wrapper">' +
+                        '<div class="speaker-avatar mapped">' + item.initial + '</div>' +
+                    '</div>' +
+                    '<div class="transcript-content">' +
+                        '<div class="transcript-header">' +
+                            '<div class="transcript-meta">' +
+                                '<span class="speaker-name mapped">' + item.speaker + '</span>' +
+                                '<span class="time-stamp">' + item.timestamp + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="transcript-text">' + item.text + '</div>' +
+                    '</div>';
+                transcriptList.appendChild(transcriptItem);
+            });
+        }
 
-        <!-- 주요 키워드 -->
-        <div class="keywords-section">
-          <h3 class="section-title">주요 키워드</h3>
-          <div class="keywords-grid" id="keywordsGrid">
-            <span class="keyword-chip">#마케팅</span>
-            <span class="keyword-chip">#전략</span>
-            <span class="keyword-chip">#Q4</span>
-            <span class="keyword-chip">#목표</span>
-            <span class="keyword-chip">#예산</span>
-          </div>
-        </div>
-
-        <!-- 회의록 내용 -->
-        <div class="meeting-content-section">
-          <div class="section-header">
-            <h3 class="section-title">회의록</h3>
-            <div class="edit-notice hidden" id="editNotice">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4M12 8h.01" />
-              </svg>
-              수정 모드
-            </div>
-          </div>
-
-          <div class="content-card" id="contentCard">
-            <div class="content-view" id="contentView">
-              <h4>회의 목적</h4>
-              <p>Q4 마케팅 전략 수립 및 예산 배분 논의</p>
-
-              <h4>주요 안건</h4>
-              <ol>
-                <li>Q3 마케팅 성과 리뷰</li>
-                <li>Q4 목표 및 전략 수립</li>
-                <li>예산 배분 계획</li>
-                <li>주요 캠페인 일정</li>
-              </ol>
-
-              <h4>논의 내용</h4>
-              <p><strong>김명희:</strong> Q3 마케팅 캠페인의 ROI가 목표 대비 15% 상승했습니다. 특히 디지털 채널의 성과가 두드러졌습니다.</p>
-              <p><strong>홍길동:</strong> 좋은 성과입니다. Q4에는 이 전략을 확대하되, 오프라인 채널도 균형있게 운영하면 좋겠습니다.</p>
-              <p><strong>박지민:</strong> Q4 예산 중 60%를 디지털에, 40%를 오프라인에 배분하는 것을 제안합니다.</p>
-
-              <h4>결정 사항</h4>
-              <ul>
-                <li>Q4 마케팅 예산: 5억원</li>
-                <li>디지털 마케팅 60%, 오프라인 40% 배분</li>
-                <li>주요 캠페인 10월 15일 시작</li>
-              </ul>
-
-              <h4>액션 아이템</h4>
-              <ul>
-                <li>김명희: 상세 예산안 작성 (10/5까지)</li>
-                <li>박지민: 캠페인 기획서 제출 (10/8까지)</li>
-                <li>홍길동: 경쟁사 분석 보고 (10/10까지)</li>
-              </ul>
-            </div>
-
-            <textarea class="content-editor hidden" id="contentEditor"></textarea>
-          </div>
-
-          <div class="edit-actions hidden" id="editActions">
-            <button class="action-btn secondary" onclick="cancelEdit()">취소</button>
-            <button class="action-btn primary" onclick="saveEdit()">저장</button>
-          </div>
-        </div>
-
-        <!-- 참석자 목록 -->
-        <div class="participants-section">
-          <h3 class="section-title">참석자</h3>
-          <div class="participants-grid">
-            <div class="participant-card">
-              <div class="participant-avatar">홍</div>
-              <div class="participant-info">
-                <div class="participant-name">홍길동</div>
-                <div class="participant-role">회의 주최자</div>
-              </div>
-            </div>
-            <div class="participant-card">
-              <div class="participant-avatar">김</div>
-              <div class="participant-info">
-                <div class="participant-name">김명희</div>
-                <div class="participant-role">마케팅 팀장</div>
-              </div>
-            </div>
-            <div class="participant-card">
-              <div class="participant-avatar">박</div>
-              <div class="participant-info">
-                <div class="participant-name">박지민</div>
-                <div class="participant-role">마케팅 매니저</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 챗봇 컨테이너 -->
-      <div id="chatbot-container"></div>
-
-      <!-- 플로팅 버튼 -->
-      <button class="floating-chat-btn" id="floatingChatBtn">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
-      </button>
-    </main>
-  </div>
-
-  <script src="static/js/app.js"></script>
-  <script src="static/js/meetingDetail.js"></script>
-  <script>
-    // 챗봇 로드
-    fetch("components/chatbot.html")
-      .then(res => res.text())
-      .then(html => {
-        const container = document.getElementById("chatbot-container");
-        container.innerHTML = html;
-
-        const closeBtn = container.querySelector(".close-chat-btn");
-        const sendBtn = container.querySelector(".send-btn");
-        const chatInput = container.querySelector("#chatInput");
-        const floatingBtn = document.getElementById("floatingChatBtn");
-
-        if (closeBtn) closeBtn.addEventListener("click", closeChat);
-        if (sendBtn) sendBtn.addEventListener("click", sendMessage);
-        if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
-        if (floatingBtn) floatingBtn.addEventListener("click", openChat);
-      });
-
-    // 사이드바 로드
-    fetch("components/sidebar.html")
-      .then(res => res.text())
-      .then(html => {
-        const sidebar = document.getElementById("sidebar-container");
-        sidebar.innerHTML = html;
-
-        const currentPage = window.location.pathname.split("/").pop();
-        const navItems = sidebar.querySelectorAll(".nav-menu a");
-
-        navItems.forEach(item => {
-          const linkPath = item.getAttribute("href");
-          if (linkPath === currentPage) {
-            item.classList.add("active");
-          } else {
-            item.classList.remove("active");
-          }
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTranscripts();
         });
-      });
-  </script>
-</body>
 
+        // 키워드 검색 기능
+        function searchKeyword() {
+            var input = document.getElementById('keywordSearchInput');
+            var keyword = input.value.trim();
+            
+            if (!keyword) return;
+            
+            clearHighlights();
+            highlightKeyword(keyword);
+            
+            // 클리어 버튼 표시
+            document.querySelector('.keyword-clear-btn').classList.remove('hidden');
+        }
+
+        function quickSearchKeyword(keyword) {
+            var input = document.getElementById('keywordSearchInput');
+            input.value = keyword;
+            searchKeyword();
+        }
+
+        function clearKeywordSearch() {
+            var input = document.getElementById('keywordSearchInput');
+            input.value = '';
+            clearHighlights();
+            
+            // 클리어 버튼 숨기기
+            document.querySelector('.keyword-clear-btn').classList.add('hidden');
+        }
+
+        function highlightKeyword(keyword) {
+            var regex = new RegExp('(' + escapeRegExp(keyword) + ')', 'gi');
+            
+            // AI 요약에서 하이라이트
+            highlightInElements('.summary-text', regex);
+            
+            // 회의 내용에서 하이라이트
+            highlightInElements('.transcript-text', regex);
+        }
+
+        function highlightInElements(selector, regex) {
+            var elements = document.querySelectorAll(selector);
+            
+            elements.forEach(function(element) {
+                var originalText = element.textContent;
+                var highlightedText = originalText.replace(regex, '<mark class="keyword-highlight">$1</mark>');
+                
+                if (originalText !== highlightedText) {
+                    element.innerHTML = highlightedText;
+                }
+            });
+        }
+
+        function clearHighlights() {
+            var highlights = document.querySelectorAll('.keyword-highlight');
+            
+            highlights.forEach(function(mark) {
+                var parent = mark.parentNode;
+                parent.replaceChild(document.createTextNode(mark.textContent), mark);
+                parent.normalize();
+            });
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Enter 키로 검색
+        document.addEventListener('DOMContentLoaded', function() {
+            var input = document.getElementById('keywordSearchInput');
+            if (input) {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchKeyword();
+                    }
+                });
+            }
+        });
+
+        // 챗봇 로드
+        fetch("components/chatbot.html")
+            .then(function(res) { return res.text(); })
+            .then(function(html) {
+                var container = document.getElementById("chatbot-container");
+                container.innerHTML = html;
+
+                var closeBtn = container.querySelector(".close-chat-btn");
+                var sendBtn = container.querySelector(".send-btn");
+                var chatInput = container.querySelector("#chatInput");
+                var floatingBtn = document.getElementById("floatingChatBtn");
+
+                if (closeBtn) closeBtn.addEventListener("click", closeChat);
+                if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+                if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
+                if (floatingBtn) floatingBtn.addEventListener("click", openChat);
+            });
+
+        // 사이드바 로드
+        fetch("components/sidebar.html")
+            .then(function(res) { return res.text(); })
+            .then(function(html) {
+                var sidebar = document.getElementById("sidebar-container");
+                sidebar.innerHTML = html;
+
+                var currentPage = window.location.pathname.split("/").pop();
+                var navItems = sidebar.querySelectorAll(".nav-menu a");
+
+                navItems.forEach(function(item) {
+                    var linkPath = item.getAttribute("href");
+                    if (linkPath === currentPage) {
+                        item.classList.add("active");
+                    } else {
+                        item.classList.remove("active");
+                    }
+                });
+            });
+    </script>
+</body>
 </html>

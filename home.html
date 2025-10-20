@@ -24,7 +24,7 @@
       <div id="mainPage" class="content-wrapper">
         <div class="page-header">
           <h2>안녕하세요, 홍길동님</h2>
-          <p>오늘도 생산적인 하루를 만들어가세요</p>
+          <p id="current-date-display">오늘도 생산적인 하루를 만들어가세요</p>
         </div>
 
         <div class="cta-banner">
@@ -36,6 +36,37 @@
             </svg>
             회의 만들기
           </button>
+        </div>
+
+        <!-- 3개 카드 1열 배치 -->
+        <div class="three-col-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">최근 회의</h3>
+              <a class="card-link" onclick="goToMeetings()">전체보기</a> 
+            </div>
+            <div class="meeting-list">
+              <!-- JavaScript로 동적 렌더링 -->
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">다가오는 중요회의</h3>
+            </div>
+            <div class="deadline-list">
+              <!-- JavaScript로 동적 렌더링 -->
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">To-Do</h3>
+            </div>
+            <div class="todo-list">
+              <!-- JavaScript로 동적 렌더링 -->
+            </div>
+          </div>
         </div>
 
         <div class="stats-grid">
@@ -92,202 +123,7 @@
             </div>
           </div>
         </div>
-
-        <!-- 첫 번째 줄: 캘린더 + TODO -->
-        <div class="two-col-grid">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">이번 달 일정</h3>
-              <a class="card-link" href="calendar.html">캘린더 보기</a>
-            </div>
-            <div class="calendar-header">
-              <div class="calendar-month">September 2025</div>
-            </div>
-            <div class="calendar-grid">
-              <div class="calendar-day-label">일</div>
-              <div class="calendar-day-label">월</div>
-              <div class="calendar-day-label">화</div>
-              <div class="calendar-day-label">수</div>
-              <div class="calendar-day-label">목</div>
-              <div class="calendar-day-label">금</div>
-              <div class="calendar-day-label">토</div>
-
-              <div class="calendar-day">1</div>
-              <div class="calendar-day">2</div>
-              <div class="calendar-day">3</div>
-              <div class="calendar-day">4</div>
-              <div class="calendar-day">5</div>
-              <div class="calendar-day">6</div>
-              <div class="calendar-day">7</div>
-              <div class="calendar-day">8</div>
-              <div class="calendar-day">9</div>
-              <div class="calendar-day has-event">10</div>
-              <div class="calendar-day">11</div>
-              <div class="calendar-day">12</div>
-              <div class="calendar-day">13</div>
-              <div class="calendar-day">14</div>
-              <div class="calendar-day has-event">15</div>
-              <div class="calendar-day">16</div>
-              <div class="calendar-day">17</div>
-              <div class="calendar-day">18</div>
-              <div class="calendar-day">19</div>
-              <div class="calendar-day has-event">20</div>
-              <div class="calendar-day">21</div>
-              <div class="calendar-day">22</div>
-              <div class="calendar-day">23</div>
-              <div class="calendar-day">24</div>
-              <div class="calendar-day">25</div>
-              <div class="calendar-day">26</div>
-              <div class="calendar-day has-event">27</div>
-              <div class="calendar-day">28</div>
-              <div class="calendar-day has-event">29</div>
-              <div class="calendar-day today">30</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">To-Do</h3>
-            </div>
-            <div class="todo-list">
-              <div class="todo-item">
-                <input type="checkbox" class="todo-checkbox" id="todo1">
-                <label for="todo1" class="todo-label">메일 회신</label>
-              </div>
-              <div class="todo-item">
-                <input type="checkbox" class="todo-checkbox" id="todo2">
-                <label for="todo2" class="todo-label">보고서 초안 검토</label>
-              </div>
-              <div class="todo-item">
-                <input type="checkbox" class="todo-checkbox" id="todo3">
-                <label for="todo3" class="todo-label">팀 회의 자료 준비</label>
-              </div>
-              <div class="todo-item">
-                <input type="checkbox" class="todo-checkbox" id="todo4">
-                <label for="todo4" class="todo-label">클라이언트 미팅 일정 조율</label>
-              </div>
-              <div class="todo-item completed">
-                <input type="checkbox" class="todo-checkbox" id="todo5" checked>
-                <label for="todo5" class="todo-label">주간 보고서 제출</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 두 번째 줄: 최근 회의 + 다가오는 일정/마감일 -->
-        <div class="two-col-grid">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">최근 회의</h3>
-              <a class="card-link" onclick="goToMeetings()">전체보기</a> 
-            </div>
-            <div>
-              <div class="meeting-item">
-                <div class="meeting-header">
-                  <div>
-                    <div class="meeting-title">마케팅 전략 회의</div>
-                    <div class="meeting-date">09/29</div>
-                  </div>
-                </div>
-                <div class="meeting-participants">김명희 외 2명</div>
-                <div class="meeting-footer">
-                  <span class="badge">완료</span>
-                  <span class="meeting-duration">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 6v6l4 2" />
-                    </svg>
-                    45분
-                  </span>
-                </div>
-              </div>
-              <div class="meeting-item">
-                <div class="meeting-header">
-                  <div>
-                    <div class="meeting-title">개발팀 주간회의</div>
-                    <div class="meeting-date">09/27</div>
-                  </div>
-                </div>
-                <div class="meeting-participants">홍길동 외 3명</div>
-                <div class="meeting-footer">
-                  <span class="badge">완료</span>
-                  <span class="meeting-duration">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 6v6l4 2" />
-                    </svg>
-                    1시간 20분
-                  </span>
-                </div>
-              </div>
-              <div class="meeting-item">
-                <div class="meeting-header">
-                  <div>
-                    <div class="meeting-title">프로젝트 킥오프</div>
-                    <div class="meeting-date">09/25</div>
-                  </div>
-                </div>
-                <div class="meeting-participants">박지민 외 5명</div>
-                <div class="meeting-footer">
-                  <span class="badge">완료</span>
-                  <span class="meeting-duration">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 6v6l4 2" />
-                    </svg>
-                    2시간
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">다가오는 일정/마감일</h3>
-            </div>
-            <div class="deadline-list">
-              <div class="deadline-item urgent">
-                <div class="deadline-info">
-                  <div class="deadline-title">프로젝트 A 기획안 제출</div>
-                  <div class="deadline-meta">
-                    <span class="deadline-date">10/02 (수)</span>
-                    <span class="deadline-badge urgent">D-2</span>
-                  </div>
-                </div>
-              </div>
-              <div class="deadline-item">
-                <div class="deadline-info">
-                  <div class="deadline-title">월간 리뷰 미팅</div>
-                  <div class="deadline-meta">
-                    <span class="deadline-date">10/05 (금) 14:00</span>
-                    <span class="deadline-badge">D-5</span>
-                  </div>
-                </div>
-              </div>
-              <div class="deadline-item">
-                <div class="deadline-info">
-                  <div class="deadline-title">Q4 마케팅 전략 최종안 제출</div>
-                  <div class="deadline-meta">
-                    <span class="deadline-date">10/10 (화)</span>
-                    <span class="deadline-badge">D-10</span>
-                  </div>
-                </div>
-              </div>
-              <div class="deadline-item">
-                <div class="deadline-info">
-                  <div class="deadline-title">경쟁사 분석 보고</div>
-                  <div class="deadline-meta">
-                    <span class="deadline-date">10/10 (화)</span>
-                    <span class="deadline-badge">D-10</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
-
       <!-- 챗봇 컨테이너 -->
       <div id="chatbot-container"></div>
 

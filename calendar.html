@@ -53,16 +53,12 @@
                     <div class="card legend-card">
                         <div class="legend-list">
                             <div class="legend-item">
-                                <span class="legend-dot event-type-important"></span>
-                                <span>중요 회의/마감일</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot event-type-meeting"></span>
-                                <span>팀/일반 회의</span>
+                                <span class="legend-dot event-type-team"></span>
+                                <span>팀 회의</span>
                             </div>
                             <div class="legend-item">
                                 <span class="legend-dot event-type-personal"></span>
-                                <span>개인 일정/Todo</span>
+                                <span>개인 일정</span>
                             </div>
                         </div>
                     </div>
@@ -98,6 +94,7 @@
                     </div>
                 </div>
             </div>
+
             <div id="chatbot-container"></div>
 
             <button class="floating-chat-btn" id="floatingChatBtn">
@@ -110,18 +107,9 @@
         </main>
     </div>
 
-
+    <!-- JavaScript 파일 로드 -->
     <script src="static/js/app.js"></script>
     <script src="static/js/calendar.js"></script>
-
-    <script>
-        // 페이지 로드 시 캘린더 초기화
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initCalendar);
-        } else {
-            initCalendar();
-        }
-    </script>
     
     <script>
         // 챗봇 로드
@@ -151,8 +139,8 @@
                 sidebar.innerHTML = html;
                 console.log("✅ sidebar.html 삽입 완료");
 
-                // 현재 페이지 파일명 가져오기 (이 파일은 calendar.html입니다)
-                const currentPage = window.location.pathname.split("/").pop(); // 결과: calendar.html
+                // 현재 페이지 파일명 가져오기
+                const currentPage = window.location.pathname.split("/").pop();
 
                 // 모든 nav-item 탐색
                 const navItems = sidebar.querySelectorAll(".nav-menu a");
@@ -166,17 +154,6 @@
                     }
                 });
             });
-            
-        // 캘린더 기능 활성화 (calendar.js의 initCalendar 함수 호출)
-        // DOMContentLoaded를 사용하여 안전하게 initCalendar를 실행합니다.
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initCalendar);
-        } else {
-            initCalendar();
-        }
     </script>
-
-    <link rel="stylesheet" href="static/css/style.css"> 
-    <link rel="stylesheet" href="static/css/calendar.css">
 </body>
 </html>

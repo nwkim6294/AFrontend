@@ -128,7 +128,7 @@
     box-shadow: 0 0 0 3px #e8d5f0;
 }
 
-/* 우선순위 선택 */
+/* 우선순위 선택 드롭다운 (필터용) */
 .priority-select {
     padding: 4px 8px;
     border: 1px solid #e5e7eb;
@@ -138,28 +138,17 @@
     cursor: pointer;
     transition: all 0.2s;
     outline: none;
-}
-
-.priority-select.high {
-    background: #fef2f2;
-    color: #dc2626;
-    border-color: #fecaca;
-}
-
-.priority-select.medium {
-    background: #fffbeb;
-    color: #d97706;
-    border-color: #fde68a;
-}
-
-.priority-select.low {
-    background: #f0fdf4;
-    color: #16a34a;
-    border-color: #bbf7d0;
+    background: white;
+    color: #374151;
 }
 
 .priority-select:hover {
-    opacity: 0.8;
+    border-color: #8E44AD;
+}
+
+.priority-select:focus {
+    border-color: #8E44AD;
+    box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
 }
 
 /* 키워드 리스트 */
@@ -210,6 +199,23 @@
     cursor: pointer;
     transition: background 0.2s;
     border-bottom: 1px solid #f3f4f6;
+}
+
+
+/* 우선순위 뱃지 (일반 텍스트 스타일) */
+.priority-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 400;
+    color: #374151;
+}
+
+.priority-badge.high,
+.priority-badge.medium,
+.priority-badge.low {
+    background: none;
+    border: none;
+    padding: 0;
 }
 
 /* 반응형 */

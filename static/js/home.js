@@ -12,6 +12,24 @@ const currentMonth = today.getMonth();
 let globalEvents = [];
 let globalTodos = [];
 
+// 날짜 포맷 함수
+function formatCurrentDate() {
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const month = today.getMonth() + 1;
+    const date = today.getDate();
+    const dayOfWeek = days[today.getDay()];
+    
+    return `${month}월 ${date}일 (${dayOfWeek})`;
+}
+
+// 페이지 헤더에 날짜 표시
+function displayCurrentDate() {
+    const dateDisplay = document.getElementById('current-date-display');
+    if (dateDisplay) {
+        dateDisplay.textContent = formatCurrentDate();
+    }
+}
+
 // 날짜를 YYYY-MM-DD 형식으로 변환
 function formatDateString(date) {
     const year = date.getFullYear();
@@ -30,7 +48,7 @@ function loadEvents() {
             date: new Date(event.date)
         }));
     }
-    return getDefaultEvents();
+    return [];
 }
 
 // localStorage에서 TODO 로드
@@ -44,17 +62,6 @@ function loadTodos() {
         }));
     }
     return [];
-}
-
-// 기본 이벤트 데이터
-function getDefaultEvents() {
-    return [
-        { date: new Date(currentYear, 9, 9), title: "AI 모델 업데이트 검토", type: "important" },
-        { date: new Date(currentYear, 9, 9), title: "팀 점심 회식 예약", type: "meeting" },
-        { date: new Date(currentYear, 9, 9), title: "개인 학습 시간", type: "personal" },
-        { date: new Date(currentYear, 9, 10), title: "주간 업무 보고 회의", type: "meeting" },
-        { date: new Date(currentYear, 9, 13), title: "개발팀 정기 주간회의", type: "meeting" },
-    ];
 }
 
 // localStorage에 저장
@@ -77,97 +84,6 @@ function getEventsForDate(date, events) {
     });
 }
 
-// 월 이름 포맷
-function formatMonthYear(year, monthIndex) {
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    return `${monthNames[monthIndex]} ${year}`;
-}
-
-// 홈 캘린더 렌더링 (오늘 날짜 기준 현재 월)
-function renderHomeCalendar(events) {
-    const calendarGrid = document.querySelector('.calendar-grid');
-    if (!calendarGrid) return;
-    
-    // 캘린더 헤더 업데이트
-    const calendarHeader = document.querySelector('.calendar-month');
-    if (calendarHeader) {
-        calendarHeader.textContent = formatMonthYear(currentYear, currentMonth);
-    }
-    
-    // 기존 날짜 셀만 찾기 (요일 라벨 제외)
-    const dayLabels = calendarGrid.querySelectorAll('.calendar-day-label');
-    const calendarDays = calendarGrid.querySelectorAll('.calendar-day');
-    
-    // 요일 라벨이 없으면 추가
-    if (dayLabels.length === 0) {
-        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-        const fragment = document.createDocumentFragment();
-        
-        dayNames.forEach(day => {
-            const dayLabel = document.createElement('div');
-            dayLabel.className = 'calendar-day-label';
-            dayLabel.textContent = day;
-            fragment.appendChild(dayLabel);
-        });
-        
-        calendarGrid.insertBefore(fragment, calendarGrid.firstChild);
-    }
-    
-    // 기존 날짜 셀 제거
-    calendarDays.forEach(day => day.remove());
-    
-    // 현재 월의 첫 날과 마지막 날 계산
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
-    
-    const fragment = document.createDocumentFragment();
-    
-    // 이전 달 날짜 (빈 공간)
-    for (let i = 0; i < firstDayOfMonth; i++) {
-        const dayCell = document.createElement('div');
-        dayCell.className = 'calendar-day other-month';
-        dayCell.textContent = daysInPrevMonth - firstDayOfMonth + 1 + i;
-        fragment.appendChild(dayCell);
-    }
-    
-    // 현재 달 날짜
-    for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(currentYear, currentMonth, day);
-        const dayCell = document.createElement('div');
-        dayCell.className = 'calendar-day';
-        dayCell.textContent = day;
-        
-        const dayEvents = getEventsForDate(date, events);
-        
-        // 오늘 날짜 표시
-        if (formatDateString(date) === formatDateString(todayOnlyDate)) {
-            dayCell.classList.add('today');
-        }
-        
-        // 이벤트가 있으면 표시
-        if (dayEvents.length > 0) {
-            dayCell.classList.add('has-event');
-        }
-        
-        fragment.appendChild(dayCell);
-    }
-    
-    // 다음 달 날짜 (남은 공간)
-    const totalCells = firstDayOfMonth + daysInMonth;
-    const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-    
-    for (let i = 1; i <= remainingCells; i++) {
-        const dayCell = document.createElement('div');
-        dayCell.className = 'calendar-day other-month';
-        dayCell.textContent = i;
-        fragment.appendChild(dayCell);
-    }
-    
-    calendarGrid.appendChild(fragment);
-    console.log('✅ [홈] 캘린더 렌더링 완료:', currentYear, '년', currentMonth + 1, '월');
-}
-
 // 홈 TODO 리스트 렌더링
 function renderHomeTodoList(events, todos) {
     const todoListEl = document.querySelector('.todo-list');
@@ -183,7 +99,6 @@ function renderHomeTodoList(events, todos) {
     
     const allTodos = [
         ...personalEvents.map(e => {
-            // events에서 온 것도 todos에서 completed 상태 찾기
             const matchedTodo = todayTodos.find(t => t.title === e.title);
             return { 
                 title: e.title, 
@@ -228,7 +143,6 @@ function renderHomeTodoList(events, todos) {
         checkbox.id = `home-todo-${index}`;
         checkbox.checked = todo.completed || false;
         
-        // 체크박스 변경 시 localStorage에 저장
         checkbox.addEventListener('change', (e) => {
             const isCompleted = e.target.checked;
             
@@ -238,7 +152,6 @@ function renderHomeTodoList(events, todos) {
                 todoItem.classList.remove('completed');
             }
             
-            // globalTodos 사용
             const todoIndex = globalTodos.findIndex(t => 
                 t.title === todo.title && 
                 formatDateString(new Date(t.date)) === formatDateString(todayOnlyDate)
@@ -272,65 +185,98 @@ function renderHomeTodoList(events, todos) {
     console.log('✅ [홈] TODO 리스트 렌더링 완료:', uniqueTodos.length, '개');
 }
 
-// TODO 추가 버튼 설정
-function setupTodoAddButton(events, todos) {
-    const addBtn = document.querySelector('.add-todo-btn');
+// 중요 회의 렌더링 (다가오는 일정/마감일)
+function renderImportantMeetings(events) {
+    const deadlineListEl = document.querySelector('.deadline-list');
+    if (!deadlineListEl) return;
     
-    if (!addBtn) {
-        console.warn('[홈] TODO 추가 버튼을 찾을 수 없습니다.');
+    const importantMeetings = events.filter(e => 
+        e.important === true && 
+        new Date(e.date) >= todayOnlyDate
+    ).sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    deadlineListEl.innerHTML = '';
+    
+    if (importantMeetings.length === 0) {
+        deadlineListEl.innerHTML = `
+            <div class="empty-message" style="color: #9ca3af; text-align: center; padding: 24px 0;">등록된 중요 회의가 없습니다</div>
+        `;
         return;
     }
     
-    addBtn.addEventListener('click', () => {
-        const title = prompt('새로운 할 일을 입력하세요:');
+    importantMeetings.forEach(meeting => {
+        const meetingDate = new Date(meeting.date);
+        const diffTime = meetingDate - todayOnlyDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
-        if (!title || title.trim() === '') {
-            return;
-        }
+        const isUrgent = diffDays <= 3;
         
-        const newEvent = {
-            date: todayOnlyDate,
-            title: title.trim(),
-            type: 'personal'
-        };
+        const deadlineItem = document.createElement('div');
+        deadlineItem.className = `deadline-item ${isUrgent ? 'urgent' : ''}`;
         
-        const newTodo = {
-            date: todayOnlyDate,
-            title: title.trim(),
-            type: 'personal',
-            completed: false
-        };
+        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+        const month = meetingDate.getMonth() + 1;
+        const day = meetingDate.getDate();
+        const dayOfWeek = dayNames[meetingDate.getDay()];
         
-        // globalEvents, globalTodos 사용
-        globalEvents.push(newEvent);
-        globalTodos.push(newTodo);
+        deadlineItem.innerHTML = `
+            <div class="deadline-info">
+                <div class="deadline-title">${meeting.title}</div>
+                <div class="deadline-meta">
+                    <span class="deadline-date">${month}/${String(day).padStart(2, '0')} (${dayOfWeek})</span>
+                    <span class="deadline-badge ${isUrgent ? 'urgent' : ''}">D-${diffDays}</span>
+                </div>
+            </div>
+        `;
         
-        saveEvents(globalEvents);
-        saveTodos(globalTodos);
-        
-        console.log('✅ [홈] TODO 추가:', title);
-        
-        renderHomeCalendar(globalEvents);
-        renderHomeTodoList(globalEvents, globalTodos);
+        deadlineListEl.appendChild(deadlineItem);
     });
+    
+    console.log('✅ [홈] 중요 회의 렌더링 완료:', importantMeetings.length, '개');
 }
 
-// "캘린더 보기" 버튼 클릭 시 캘린더 페이지로 이동
-function setupCalendarViewButton() {
-    const calendarCard = document.querySelector('.card');
-    if (!calendarCard) return;
+// 최근 회의 렌더링
+function renderRecentMeetings(events) {
+    const meetingListEl = document.querySelector('.meeting-list');
+    if (!meetingListEl) return;
     
-    const calendarViewBtn = calendarCard.querySelector('.card-link');
+    const pastMeetings = events.filter(e => 
+        (e.type === 'meeting' || e.type === 'team' || e.type === 'important') &&
+        new Date(e.date) < todayOnlyDate
+    ).sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 3);
     
-    if (calendarViewBtn) {
-        calendarViewBtn.style.cursor = 'pointer';
-        
-        calendarViewBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('📅 캘린더 페이지로 이동');
-            window.location.href = 'calendar.html';
-        });
+    meetingListEl.innerHTML = '';
+    
+    if (pastMeetings.length === 0) {
+        meetingListEl.innerHTML = `
+            <div class="empty-message" style="color: #9ca3af; text-align: center; padding: 24px 0;">최근 회의가 없습니다</div>
+        `;
+        return;
     }
+    
+    pastMeetings.forEach(meeting => {
+        const meetingDate = new Date(meeting.date);
+        const month = meetingDate.getMonth() + 1;
+        const day = meetingDate.getDate();
+        
+        const meetingItem = document.createElement('div');
+        meetingItem.className = 'meeting-item';
+        
+        meetingItem.innerHTML = `
+            <div class="meeting-info">
+                <div class="meeting-title">${meeting.title}</div>
+                <div class="meeting-meta">
+                    <span class="meeting-date">${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}</span>
+                    <span class="meeting-participants">팀 회의</span>
+                </div>
+            </div>
+        `;
+        
+        meetingListEl.appendChild(meetingItem);
+    });
+    
+    console.log('✅ [홈] 최근 회의 렌더링 완료:', pastMeetings.length, '개');
 }
 
 // 홈 페이지가 표시될 때마다 데이터 새로고침
@@ -338,8 +284,10 @@ window.refreshHomeData = function() {
     console.log('🔄 [홈] 데이터 새로고침');
     globalEvents = loadEvents();
     globalTodos = loadTodos();
-    renderHomeCalendar(globalEvents);
+    displayCurrentDate();
     renderHomeTodoList(globalEvents, globalTodos);
+    renderImportantMeetings(globalEvents);
+    renderRecentMeetings(globalEvents);
 };
 
 // 홈 페이지 초기화
@@ -347,7 +295,8 @@ function initHome() {
     console.log('🏠 홈 페이지 초기화 시작');
     console.log('📅 오늘 날짜:', formatDateString(todayOnlyDate));
     
-    // 전역 변수에 할당
+    displayCurrentDate();
+    
     globalEvents = loadEvents();
     globalTodos = loadTodos();
     
@@ -357,10 +306,9 @@ function initHome() {
     const todayEvents = getEventsForDate(todayOnlyDate, globalEvents);
     console.log('🎯 오늘의 이벤트:', todayEvents.length, '개');
     
-    renderHomeCalendar(globalEvents);
     renderHomeTodoList(globalEvents, globalTodos);
-    setupTodoAddButton(globalEvents, globalTodos);
-    setupCalendarViewButton();
+    renderImportantMeetings(globalEvents);
+    renderRecentMeetings(globalEvents);
     
     console.log('✅ 홈 페이지 초기화 완료');
 }
@@ -390,5 +338,5 @@ if (document.readyState === 'loading') {
 
 // 회의록 관리 페이지로 이동
 function goToMeetings() {
-    window.location.href = 'meetings.html';  // 회의록 관리 페이지 경로
+    window.location.href = 'meetings.html';
 }

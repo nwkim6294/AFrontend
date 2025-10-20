@@ -54,17 +54,6 @@ if (priorityFilter) {
   });
 }
 
-// 우선순위 변경
-document.querySelectorAll('.priority-select').forEach(select => {
-  select.addEventListener('change', (e) => {
-    const newPriority = e.target.value;
-    e.target.className = `priority-select ${newPriority}`;
-    
-    // 서버에 저장하는 로직 추가 필요
-    console.log('Priority changed to:', newPriority);
-  });
-});
-
 // 회의록 필터링 (검색)
 function filterMeetings(query) {
   const rows = document.querySelectorAll('.table-row');
@@ -143,8 +132,8 @@ function filterByPriority(priority) {
   const rows = document.querySelectorAll('.table-row');
   
   rows.forEach(row => {
-    const select = row.querySelector('.priority-select');
-    if (priority === 'all' || select.value === priority) {
+    const rowPriority = row.getAttribute('data-priority');
+    if (priority === 'all' || rowPriority === priority) {
       row.style.display = '';
     } else {
       row.style.display = 'none';

@@ -1,11 +1,11 @@
 /* 캘린더 전용 Wrapper */
 .calendar-wrapper {
     display: flex;
-    padding: 32px;
+    padding: 32px 32px 0px 32px;
     gap: 32px;
-    min-height: calc(100vh - 64px);
     max-width: 1600px;
     margin: 0 auto;
+    min-height: calc(100vh - 64px);
 }
 
 /* 캘린더 메인 영역 (왼쪽) */
@@ -27,7 +27,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
-    padding: 0 16px;
+    padding: 0;
     flex-shrink: 0;
 }
 
@@ -38,7 +38,8 @@
     display: flex;
     flex-direction: column;
     min-height: 500px;
-    margin-bottom: 16px; /* 범례와 간격 */
+    margin-bottom: 16px;
+    max-width: 100%;
 }
 
 .control-btn {
@@ -66,11 +67,12 @@
 .calendar-grid-full {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: auto; /* 요일 라벨 */
+    grid-auto-rows: auto;
     flex: 1;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     overflow: hidden;
+    max-width: 100%;
 }
 
 .calendar-day-label {
@@ -83,7 +85,7 @@
     background: #f9fafb;
 }
 
-/* 날짜 셀에 고정 높이 대신 flex 기반 높이 */
+/* 날짜 셀 */
 .calendar-day-cell {
     position: relative;
     padding: 8px;
@@ -113,11 +115,10 @@
     font-size: 16px;
     font-weight: 600;
     color: #111827;
-    text-align: right;
-    padding: 4px 8px 0 0;
     display: block;
 }
 
+/* 오늘 날짜 스타일 - 우측 상단에 배치 */
 .calendar-day-cell.today .day-number {
     background: #8E44AD;
     color: white;
@@ -127,7 +128,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    float: right;
     font-size: 14px;
     padding: 0;
 }
@@ -138,12 +138,13 @@
     padding: 7px;
 }
 
-/* 이벤트 표시 점 */
+/* 이벤트 표시 점 - 날짜 바로 아래 중앙 배치 */
 .event-dots {
     display: flex;
     gap: 4px;
-    padding: 4px 8px 0 0;
-    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
 }
 
 .event-dot {
@@ -152,22 +153,21 @@
     border-radius: 50%;
 }
 
-.event-type-meeting {
-    background-color: #3b82f6;
+/* 팀 회의 - 핑크 계열 */
+.event-type-team {
+    background-color: #ad4489;
 }
 
-.event-type-important {
-    background-color: #ef4444;
-}
-
+/* 개인 일정 - 청록 계열 */
 .event-type-personal {
-    background-color: #10b981;
+    background-color: #44AD8E;
 }
 
-/* 범례 카드 - 캘린더 아래로 이동, 한 줄 레이아웃 */
+/* 범례 카드 */
 .legend-card {
     padding: 16px 24px;
-    flex-shrink: 0; /* 범례는 절대 줄어들지 않음 */
+    margin-bottom: 0;
+    flex-shrink: 0;
 }
 
 .legend-list {
@@ -194,17 +194,18 @@
     flex-shrink: 0;
 }
 
-/* 캘린더 우측 영역 - 회의/Todo 카드를 세로로 배치 */
+/* 캘린더 우측 영역 */
 .calendar-sidebar-right {
     width: 360px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 29px;
+    margin-top: 28px;
     margin-bottom: 10px;
 }
 
-/* 회의/Todo 카드 공통 스타일 - 완전히 동일 */
+/* 회의/Todo 카드 공통 스타일 */
 .meeting-card,
 .todo-card {
     padding: 20px;
@@ -300,6 +301,10 @@
     background: transparent;
 }
 
+.todo-item:hover .todo-actions {
+    opacity: 1;
+}
+
 .meeting-item:first-child,
 .todo-item:first-child {
     padding-top: 0;
@@ -320,6 +325,46 @@
     min-width: 0;
 }
 
+/* Todo 수정/삭제 액션 버튼 */
+.todo-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+.todo-action-btn {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.todo-action-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.todo-action-btn:hover {
+    background: #f3f4f6;
+    transform: scale(1.2);
+}
+
+.todo-action-btn.edit:hover {
+    color: #3b82f6;
+}
+
+.todo-action-btn.delete:hover {
+    color: #ef4444;
+}
+
 .meeting-item-dot,
 .todo-item-dot {
     width: 8px;
@@ -328,7 +373,39 @@
     flex-shrink: 0;
 }
 
-/* 일별 이벤트 리스트 - 캘린더 그리드만 덮는 오버레이 */
+/* 팀 회의 색상 - 핑크 계열 */
+.meeting-item-dot.type-team {
+    background-color: #ad4489;
+}
+
+/* 개인 일정 색상 - 청록 계열 */
+.todo-item-dot.type-personal {
+    background-color: #44AD8E;
+}
+
+/* 중요 표시 별 버튼 */
+.star-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 18px;
+    line-height: 1;
+    color: #d1d5db;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.star-btn:hover {
+    color: #fbbf24;
+    transform: scale(1.1);
+}
+
+.star-btn.active {
+    color: #fbbf24;
+}
+
+/* 일별 이벤트 리스트 - 오버레이 */
 .daily-events-card {
     position: absolute;
     top: 0;
@@ -414,16 +491,14 @@
     border-radius: 8px;
 }
 
-.daily-event-item.type-meeting {
-    border-left-color: #3b82f6;
+/* 팀 회의 - 핑크 계열 */
+.daily-event-item.type-team {
+    border-left-color: #ad4489;
 }
 
-.daily-event-item.type-important {
-    border-left-color: #ef4444;
-}
-
+/* 개인 일정 - 청록 계열 */
 .daily-event-item.type-personal {
-    border-left-color: #10b981;
+    border-left-color: #44AD8E;
 }
 
 .event-time {
@@ -436,18 +511,29 @@
 
 .event-details {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .event-title {
     font-weight: 600;
     color: #111827;
     font-size: 14px;
-    margin-bottom: 2px;
+    flex: 1;
 }
 
 .event-meta {
     font-size: 12px;
     color: #6b7280;
+}
+
+/* 일별 이벤트 아이템의 별 표시 */
+.event-star {
+    font-size: 16px;
+    color: #fbbf24;
+    flex-shrink: 0;
+    margin-left: 8px;
 }
 
 .hidden {

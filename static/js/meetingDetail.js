@@ -140,3 +140,52 @@ document.querySelectorAll('.keyword-chip').forEach(chip => {
     // 키워드 검색이나 필터링 기능 추가 가능
   });
 });
+
+// 수정 페이지로 이동 (RecordFinish 페이지로)
+function goToEdit() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const meetingId = urlParams.get('id') || '1';
+    window.location.href = `recordFinish.html?id=${meetingId}`;
+}
+
+// PDF 내보내기
+function exportPDF() {
+    console.log('Exporting to PDF...');
+    window.print();
+    showSuccessMessage('PDF 다운로드가 준비되었습니다.');
+}
+
+// 성공 메시지 표시
+function showSuccessMessage(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.style.cssText = `
+        position: fixed; top: 24px; right: 24px;
+        background: #10b981; color: white;
+        padding: 16px 24px; border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        z-index: 9999; font-weight: 500;
+        animation: slideIn 0.3s ease;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => document.body.removeChild(notification), 300);
+    }, 3000);
+}
+
+// 애니메이션
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(400px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(400px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);

@@ -1,15 +1,35 @@
-// localStorage 키
+const SELECTED_DATE_KEY = 'calendar_selected_date';
 const STORAGE_KEY = 'calendar_events';
 const TODO_STORAGE_KEY = 'calendar_todos';
 
-// 오늘 날짜 및 현재 표시 월 설정
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 const today = new Date();
 const todayOnlyDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-let selectedDate = todayOnlyDate; // 기본값은 오늘
 
-// localStorage 저장 함수
+let selectedDate = todayOnlyDate;
+let shouldShowOverlay = false; // 오버레이 표시 여부
+
+// performance.navigation.type으로 페이지 진입 방식 확인
+// 0: 일반 진입, 1: 새로고침, 2: 뒤로가기/앞으로가기
+const isReload = performance.navigation && performance.navigation.type === 1;
+
+if (isReload) {
+    // 새로고침인 경우: 저장된 날짜 사용하되 오버레이는 표시 안 함
+    const storedDate = sessionStorage.getItem(SELECTED_DATE_KEY);
+    if (storedDate) {
+        selectedDate = new Date(storedDate);
+        currentYear = selectedDate.getFullYear();
+        currentMonth = selectedDate.getMonth();
+    }
+} else {
+    // 첫 진입인 경우: 오늘 날짜로 초기화
+    selectedDate = todayOnlyDate;
+    currentYear = todayOnlyDate.getFullYear();
+    currentMonth = todayOnlyDate.getMonth();
+    sessionStorage.removeItem(SELECTED_DATE_KEY);
+}
+
 function saveEventsToStorage(events) {
     console.log('💾 [캘린더] 이벤트 저장:', events.length, '개');
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
@@ -20,7 +40,6 @@ function saveTodosToStorage(todos) {
     localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
 }
 
-// localStorage 로드 함수
 function loadEventsFromStorage() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -30,7 +49,7 @@ function loadEventsFromStorage() {
             date: new Date(event.date)
         }));
     }
-    return getDefaultEvents();
+    return [];  // ← getDefaultEvents() 제거, 빈 배열 반환
 }
 
 function loadTodosFromStorage() {
@@ -45,40 +64,49 @@ function loadTodosFromStorage() {
     return [];
 }
 
-// 기본 이벤트 데이터
 function getDefaultEvents() {
     return [
-        { date: new Date(currentYear, 9, 9), title: "AI 모델 업데이트 검토", type: "important" }, 
-        { date: new Date(currentYear, 9, 9), title: "팀 점심 회식 예약", type: "meeting" },
-        { date: new Date(currentYear, 9, 9), title: "개인 학습 시간", type: "personal" }, 
-        { date: new Date(currentYear, 9, 9), title: "차기 프로젝트 회의 준비", type: "personal" }, 
-        { date: new Date(currentYear, 9, 9), title: "청구서 제출", type: "personal" }, 
-        { date: new Date(currentYear, 9, 9), title: "장비 주문 및 확인", type: "personal" }, 
-        { date: new Date(currentYear, 9, 9), title: "주간 성과 정리", type: "personal" },
-        { date: new Date(currentYear, 9, 10), title: "주간 업무 보고 회의", type: "meeting" },
-        { date: new Date(currentYear, 9, 10), title: "새로운 프로젝트 기획", type: "important" },
-        { date: new Date(currentYear, 9, 11), title: "인사팀 면접 일정", type: "meeting" },
-        { date: new Date(currentYear, 9, 12), title: "보고서 최종 검토 마감", type: "important" },
-        { date: new Date(currentYear, 9, 12), title: "주말 계획 정리", type: "personal" },
-        { date: new Date(currentYear, 9, 13), title: "개발팀 정기 주간회의", type: "meeting" },
-        { date: new Date(currentYear, 9, 13), title: "마케팅 전략 회의", type: "meeting" },
+        { date: new Date(currentYear, 9, 20), title: "AI 모델 업데이트 검토", type: "team" }, 
+        { date: new Date(currentYear, 9, 20), title: "팀 점심 회식 예약", type: "meeting" },
+        { date: new Date(currentYear, 9, 20), title: "개인 학습 시간", type: "personal" }, 
+        { date: new Date(currentYear, 9, 20), title: "차기 프로젝트 회의 준비", type: "personal" }, 
+        { date: new Date(currentYear, 9, 20), title: "청구서 제출", type: "personal" }, 
+        { date: new Date(currentYear, 9, 20), title: "장비 주문 및 확인", type: "personal" }, 
+        { date: new Date(currentYear, 9, 20), title: "주간 성과 정리", type: "personal" },
+        { date: new Date(currentYear, 9, 21), title: "주간 업무 보고 회의", type: "meeting" },
+        { date: new Date(currentYear, 9, 21), title: "새로운 프로젝트 기획", type: "team", important: true },
+        { date: new Date(currentYear, 9, 22), title: "인사팀 면접 일정", type: "meeting" },
+        { date: new Date(currentYear, 9, 23), title: "보고서 최종 검토 마감", type: "team", important: true },
+        { date: new Date(currentYear, 9, 23), title: "주말 계획 정리", type: "personal" },
+        { date: new Date(currentYear, 9, 24), title: "개발팀 정기 주간회의", type: "meeting" },
+        { date: new Date(currentYear, 9, 24), title: "마케팅 전략 회의", type: "meeting" },
     ];
 }
 
-// localStorage에서 데이터 로드
 let events = loadEventsFromStorage();
 let todos = loadTodosFromStorage();
-window.todos = todos; // ✅ 전역 접근 가능하게
+window.todos = todos;
 
-// localStorage가 비어있을 때만 시드 데이터
-if (events.length === 0) {
+// 최초 1회만 더미 데이터 생성 (초기화 플래그 확인)
+const INIT_FLAG_KEY = 'calendar_initialized';
+const isInitialized = localStorage.getItem(INIT_FLAG_KEY);
+
+if (!isInitialized && events.length === 0) {
     events = getDefaultEvents();
     saveEventsToStorage(events);
+    localStorage.setItem(INIT_FLAG_KEY, 'true');
+    console.log('✅ [캘린더] 최초 더미 데이터 생성 완료');
 }
 
 console.log('📌 [캘린더] 초기 로드 - 이벤트:', events.length, 'TODO:', todos.length);
 
-// HTML 요소 가져오기
+function formatDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function initCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
     const currentMonthYear = document.getElementById('currentMonthYear');
@@ -108,13 +136,6 @@ function initCalendar() {
         return `${monthNames[monthIndex]} ${year}`;
     }
 
-    function formatDateString(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
     function getEventsForDate(date) {
         const dateString = formatDateString(date);
         return events.filter(event => {
@@ -127,13 +148,27 @@ function initCalendar() {
         const dotsContainer = document.createElement('div');
         dotsContainer.className = 'event-dots';
         
-        const uniqueTypes = [...new Set(dayEvents.map(e => e.type))];
+        // 팀 회의가 있는지 체크 (meeting, team, important 모두 팀 회의로 간주)
+        const hasTeamEvent = dayEvents.some(e => 
+            e.type === 'meeting' || e.type === 'team' || e.type === 'important'
+        );
         
-        uniqueTypes.forEach(type => {
+        // 개인 일정이 있는지 체크
+        const hasPersonalEvent = dayEvents.some(e => e.type === 'personal');
+        
+        // 팀 회의 점 추가
+        if (hasTeamEvent) {
             const dot = document.createElement('span');
-            dot.className = `event-dot event-type-${type}`;
+            dot.className = 'event-dot event-type-team';
             dotsContainer.appendChild(dot);
-        });
+        }
+        
+        // 개인 일정 점 추가
+        if (hasPersonalEvent) {
+            const dot = document.createElement('span');
+            dot.className = 'event-dot event-type-personal';
+            dotsContainer.appendChild(dot);
+        }
         
         return dotsContainer;
     }
@@ -170,6 +205,13 @@ function initCalendar() {
             dayCell.className = 'calendar-day-cell';
             dayCell.dataset.date = formatDateString(date);
             
+            // 날짜 컨테이너 생성 (날짜 숫자 + 점을 세로로 배치)
+            const dayContent = document.createElement('div');
+            dayContent.style.display = 'flex';
+            dayContent.style.flexDirection = 'column';
+            dayContent.style.alignItems = 'flex-end';
+            dayContent.style.width = '100%';
+            
             if (formatDateString(date) === formatDateString(todayOnlyDate)) {
                 dayCell.classList.add('today');
             }
@@ -177,13 +219,15 @@ function initCalendar() {
             const dayNumber = document.createElement('span');
             dayNumber.className = 'day-number';
             dayNumber.textContent = day;
-            dayCell.appendChild(dayNumber);
+            dayContent.appendChild(dayNumber);
 
             const dayEvents = getEventsForDate(date);
             if (dayEvents.length > 0) {
                 const eventDots = createEventDots(dayEvents);
-                dayCell.appendChild(eventDots);
+                dayContent.appendChild(eventDots);
             }
+            
+            dayCell.appendChild(dayContent);
 
             dayCell.addEventListener('click', () => {
                 selectDay(dayCell.dataset.date);
@@ -192,7 +236,6 @@ function initCalendar() {
             calendarGrid.appendChild(dayCell);
         }
         
-        // 다음 달 날짜 채우기
         const totalCells = calendarGrid.children.length;
         const remainingCells = 7 - ((totalCells - 7) % 7);
         
@@ -208,10 +251,7 @@ function initCalendar() {
             }
         }
         
-        // 마지막에 총 행 개수 계산
-        const totalRows = Math.ceil((calendarGrid.children.length - 7) / 7); // 요일 라벨 제외
-        
-        // 동적으로 grid-template-rows 설정
+        const totalRows = Math.ceil((calendarGrid.children.length - 7) / 7);
         calendarGrid.style.gridTemplateRows = `auto repeat(${totalRows}, 1fr)`;
     }
 
@@ -229,6 +269,9 @@ function initCalendar() {
         
         const [year, month, day] = dateString.split('-').map(Number);
         selectedDate = new Date(year, month - 1, day);
+        
+        sessionStorage.setItem(SELECTED_DATE_KEY, selectedDate.toISOString());
+
         const dayEvents = getEventsForDate(selectedDate);
         
         if (dailyEventsTitle) {
@@ -238,11 +281,11 @@ function initCalendar() {
         if (dailyEventsContent) {
             dailyEventsContent.innerHTML = '';
             
-            const meetings = dayEvents.filter(e => e.type === 'meeting' || e.type === 'important');
-            const todos = dayEvents.filter(e => e.type === 'personal');
+            const meetings = dayEvents.filter(e => e.type === 'meeting' || e.type === 'important' || e.type === 'team');
+            const personalTodos = dayEvents.filter(e => e.type === 'personal');
 
-            const typeOrder = { 'important': 1, 'meeting': 2 };
-            meetings.sort((a, b) => (typeOrder[a.type] || 3) - (typeOrder[b.type] || 3));
+            const typeOrder = { 'important': 1, 'team': 2, 'meeting': 3 };
+            meetings.sort((a, b) => (typeOrder[a.type] || 4) - (typeOrder[b.type] || 4));
 
             const meetingSection = document.createElement('div');
             meetingSection.className = 'daily-events-section';
@@ -254,31 +297,28 @@ function initCalendar() {
             if (meetings.length === 0) {
                 meetingList.innerHTML = '<p class="cell-secondary" style="text-align: center; padding: 16px;">등록된 회의가 없습니다.</p>';
             } else {
-                meetings.forEach(event => {
-                    const eventItem = document.createElement('div');
-                    eventItem.className = `daily-event-item type-${event.type}`;
+                meetings.forEach(item => {
+                    const meetingItem = document.createElement('div');
+                    meetingItem.className = 'daily-event-item type-team';
                     
-                    let time = '종일';
-                    if (event.title.includes('회의')) {
-                        time = '10:00';
-                    } else if (event.title.includes('마감')) {
-                        time = '18:00';
-                    }
+                    const isImportant = item.important || false;
                     
-                    eventItem.innerHTML = `
-                        <div class="event-time">${time}</div>
+                    meetingItem.innerHTML = `
                         <div class="event-details">
-                            <div class="event-title">${event.title}</div>
-                            <div class="event-meta">${event.type === 'meeting' ? '팀 회의' : '중요'}</div>
+                            <div class="event-title">${item.title}</div>
+                            <div class="event-meta">팀 회의${isImportant ? ' • 중요' : ''}</div>
                         </div>
+                        ${isImportant ? `<svg class="event-star" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" style="margin-left: 8px;">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>` : ''}
                     `;
-                    meetingList.appendChild(eventItem);
+                    
+                    meetingList.appendChild(meetingItem);
                 });
             }
             
             meetingSection.appendChild(meetingList);
             
-            // selectDay 함수 내부의 To-do 섹션
             const todoSection = document.createElement('div');
             todoSection.className = 'daily-events-section';
             todoSection.innerHTML = '<div class="daily-events-section-title">To-do</div>';
@@ -286,11 +326,10 @@ function initCalendar() {
             const todoList = document.createElement('div');
             todoList.className = 'daily-events-list';
 
-            if (todos.length === 0) {
+            if (personalTodos.length === 0) {
                 todoList.innerHTML = '<p class="cell-secondary" style="text-align: center; padding: 16px;">등록된 할 일이 없습니다.</p>';
             } else {
-                todos.forEach(event => {
-                    // todos 배열에서 completed 상태 확인
+                personalTodos.forEach(event => {
                     const selectedDateString = formatDateString(selectedDate);
                     const matchedTodo = window.todos.find(t => 
                         t.title === event.title && 
@@ -299,15 +338,9 @@ function initCalendar() {
                     const isCompleted = matchedTodo ? matchedTodo.completed : false;
                     
                     const eventItem = document.createElement('div');
-                    eventItem.className = `daily-event-item type-${event.type} ${isCompleted ? 'completed' : ''}`;
-                    
-                    let time = '종일';
-                    if (event.title.includes('학습')) {
-                        time = '14:00';
-                    }
+                    eventItem.className = `daily-event-item type-personal ${isCompleted ? 'completed' : ''}`;
                     
                     eventItem.innerHTML = `
-                        <div class="event-time">${time}</div>
                         <div class="event-details">
                             <div class="event-title" style="${isCompleted ? 'text-decoration: line-through; color: #9ca3af;' : ''}">${event.title}</div>
                             <div class="event-meta">개인${isCompleted ? ' • 완료' : ''}</div>
@@ -325,8 +358,8 @@ function initCalendar() {
 
         dailyEventsList.classList.remove('hidden');
 
-        renderTodoList();  // 우측 TODO 카드 업데이트
-        renderMeetingList(); // 우측 회의 카드도 업데이트 (필요시)
+        renderMeetingList();
+        renderTodoList();
     }
 
     window.closeDailyEvents = function() {
@@ -356,19 +389,17 @@ function initCalendar() {
     function renderMeetingList() {
         if (!meetingListEl) return;
 
-        // selectedDate 사용 (todayOnlyDate → selectedDate)
         const formattedDate = selectedDate.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric'});
         if (meetingCardTitleContentEl) {
             meetingCardTitleContentEl.textContent = `${formattedDate}의 회의`;
         }
 
-        // 선택된 날짜의 이벤트 가져오기
         const selectedEvents = getEventsForDate(selectedDate);
-        const meetings = selectedEvents.filter(event => event.type === 'meeting' || event.type === 'important');
+        const meetings = selectedEvents.filter(event => event.type === 'meeting' || event.type === 'team' || event.type === 'important');
 
-        const typeOrder = { 'important': 1, 'meeting': 2 };
+        const typeOrder = { 'important': 1, 'team': 2, 'meeting': 3 };
         meetings.sort((a, b) => {
-            return (typeOrder[a.type] || 3) - (typeOrder[b.type] || 3);
+            return (typeOrder[a.type] || 4) - (typeOrder[b.type] || 4);
         });
 
         meetingListEl.innerHTML = '';
@@ -381,13 +412,29 @@ function initCalendar() {
             return;
         }
 
-        meetings.forEach(item => {
+        meetings.forEach(event => {
             const meetingItem = document.createElement('div');
             meetingItem.className = 'meeting-item';
+            
+            const isImportant = event.important || false;
+            
             meetingItem.innerHTML = `
-                <span class="meeting-item-dot event-type-${item.type}"></span>
-                <span class="meeting-item-text">${item.title}</span>
+                <span class="meeting-item-dot type-team"></span>
+                <span class="meeting-item-text">${event.title}</span>
+                <button class="star-btn ${isImportant ? 'active' : ''}" data-meeting-title="${event.title}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="${isImportant ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </button>
             `;
+            
+            const starBtn = meetingItem.querySelector('.star-btn');
+            starBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const title = this.getAttribute('data-meeting-title');
+                toggleImportant(title);
+            });
+            
             meetingListEl.appendChild(meetingItem);
         });
 
@@ -396,71 +443,127 @@ function initCalendar() {
         }
     }
 
+    function toggleImportant(title) {
+        const selectedDateString = formatDateString(selectedDate);
+        
+        // 모든 회의 타입 포함하여 검색
+        const eventIndex = events.findIndex(e => 
+            e.title === title && 
+            formatDateString(e.date) === selectedDateString
+        );
+        
+        if (eventIndex !== -1) {
+            events[eventIndex].important = !events[eventIndex].important;
+            saveEventsToStorage(events);
+            
+            console.log('✅ 중요 표시 토글:', title, '→', events[eventIndex].important);
+            
+            // 필요한 부분만 업데이트
+            renderCalendar();
+            renderMeetingList();
+            selectDay(selectedDateString);
+            showSuccessMessage(events[eventIndex].important ? '중요 회의로 표시했습니다' : '중요 표시를 해제했습니다');
+        } else {
+            console.error('❌ 회의를 찾을 수 없습니다:', title, selectedDateString);
+        }
+    }
+
     function renderTodoList() {
-    if (!todoListEl) return;
+        if (!todoListEl) return;
 
-    // 선택된 날짜 사용
-    const formattedDate = selectedDate.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric'});
-    if (todoCardTitleContentEl) {
-        todoCardTitleContentEl.textContent = `${formattedDate}의 To-do`;
-    }
-
-    // 선택된 날짜의 이벤트 가져오기
-    const selectedEvents = getEventsForDate(selectedDate);
-    const personalEvents = selectedEvents.filter(event => event.type === 'personal');
-
-    // 선택된 날짜의 TODO만 필터링
-    const selectedDateString = formatDateString(selectedDate);
-    const selectedTodos = todos.filter(t => {
-        const todoDateString = formatDateString(new Date(t.date));
-        return todoDateString === selectedDateString;
-    });
-
-    const combinedTodos = [
-        ...personalEvents,
-        ...selectedTodos.map(t => ({ title: t.title, type: t.type }))
-    ];
-
-    const uniqueTitles = new Set();
-    let finalTodos = [];
-    combinedTodos.forEach(item => {
-        if (!uniqueTitles.has(item.title)) {
-            uniqueTitles.add(item.title);
-            finalTodos.push(item);
+        const formattedDate = selectedDate.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric'});
+        if (todoCardTitleContentEl) {
+            todoCardTitleContentEl.textContent = `${formattedDate}의 To-do`;
         }
-    });
 
-    todoListEl.innerHTML = '';
+        const selectedEvents = getEventsForDate(selectedDate);
+        const personalEvents = selectedEvents.filter(event => event.type === 'personal');
 
-    if (finalTodos.length === 0) {
-        todoListEl.innerHTML = '<p class="cell-secondary" style="text-align: center; padding: 16px 0;">등록된 할 일이 없습니다.</p>';
+        const selectedDateString = formatDateString(selectedDate);
+        const selectedTodos = todos.filter(t => {
+            const todoDateString = formatDateString(new Date(t.date));
+            return todoDateString === selectedDateString;
+        });
+
+        const combinedTodos = [
+            ...personalEvents,
+            ...selectedTodos.map(t => ({ title: t.title, type: t.type, id: t.id }))
+        ];
+
+        const uniqueTitles = new Set();
+        let finalTodos = [];
+        combinedTodos.forEach(item => {
+            if (!uniqueTitles.has(item.title)) {
+                uniqueTitles.add(item.title);
+                finalTodos.push(item);
+            }
+        });
+
+        todoListEl.innerHTML = '';
+
+        if (finalTodos.length === 0) {
+            todoListEl.innerHTML = '<p class="cell-secondary" style="text-align: center; padding: 16px 0;">등록된 할 일이 없습니다.</p>';
+            if (todoCountEl) {
+                todoCountEl.textContent = `(총 0개)`;
+            }
+            return;
+        }
+
+        finalTodos.forEach(item => {
+            const todoItem = document.createElement('div');
+            todoItem.className = 'todo-item';
+            
+            const todoId = item.id || `todo_${item.title.replace(/\s/g, '_')}`;
+            
+            todoItem.innerHTML = `
+                <span class="todo-item-dot type-personal"></span>
+                <span class="todo-item-text">${item.title}</span>
+                <div class="todo-actions">
+                    <button class="todo-action-btn edit" data-todo-id="${todoId}" data-todo-title="${item.title}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </button>
+                    <button class="todo-action-btn delete" data-todo-id="${todoId}" data-todo-title="${item.title}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            const editBtn = todoItem.querySelector('.edit');
+            const deleteBtn = todoItem.querySelector('.delete');
+            
+            editBtn.addEventListener('click', function() {
+                const id = this.getAttribute('data-todo-id');
+                const title = this.getAttribute('data-todo-title');
+                editTodo(id, title);
+            });
+            
+            deleteBtn.addEventListener('click', function() {
+                const id = this.getAttribute('data-todo-id');
+                const title = this.getAttribute('data-todo-title');
+                deleteTodo(id, title);
+            });
+            
+            todoListEl.appendChild(todoItem);
+        });
+
         if (todoCountEl) {
-            todoCountEl.textContent = `(총 0개)`;
+            todoCountEl.textContent = `(총 ${finalTodos.length}개)`;
         }
-        return;
     }
 
-    finalTodos.forEach(item => {
-        const todoItem = document.createElement('div');
-        todoItem.className = 'todo-item';
-        todoItem.innerHTML = `
-            <span class="todo-item-dot event-type-${item.type}"></span>
-            <span class="todo-item-text">${item.title}</span>
-        `;
-        todoListEl.appendChild(todoItem);
-    });
-
-    if (todoCountEl) {
-        todoCountEl.textContent = `(총 ${finalTodos.length}개)`;
-    }
-}
-
-    // addTodo 함수도 수정 - 선택한 날짜에 추가
     function addTodo() {
         if (!todoInput) return;
 
         const title = todoInput.value.trim();
         if (title) {
+            const todoId = `todo_${Date.now()}`;
+            
             events.push({ 
                 date: selectedDate,
                 title: title, 
@@ -468,25 +571,91 @@ function initCalendar() {
             });
             
             todos.push({
+                id: todoId,
                 date: selectedDate,
                 title: title,
                 type: "personal",
-                completed: false // 기본값 false
+                completed: false
             });
             
-            window.todos = todos; // 전역 업데이트
+            window.todos = todos;
 
             saveEventsToStorage(events);
             saveTodosToStorage(todos);
 
             todoInput.value = '';
+            
+            renderCalendar();
             renderMeetingList();
             renderTodoList();
-            renderCalendar();
 
-            // 팝업도 다시 렌더링 (추가된 TODO가 팝업에도 표시됨)
             const selectedString = formatDateString(selectedDate);
             selectDay(selectedString);
+            
+            showSuccessMessage('할 일이 추가되었습니다');
+        }
+    }
+
+    function editTodo(todoId, currentTitle) {
+        const newTitle = prompt('할 일 수정:', currentTitle);
+        if (newTitle && newTitle.trim() && newTitle !== currentTitle) {
+            const todoIndex = todos.findIndex(t => t.id === todoId || t.title === currentTitle);
+            if (todoIndex !== -1) {
+                todos[todoIndex].title = newTitle.trim();
+            }
+            
+            const eventIndex = events.findIndex(e => 
+                e.title === currentTitle && 
+                e.type === 'personal' &&
+                formatDateString(e.date) === formatDateString(selectedDate)
+            );
+            if (eventIndex !== -1) {
+                events[eventIndex].title = newTitle.trim();
+            }
+            
+            window.todos = todos;
+            
+            saveEventsToStorage(events);
+            saveTodosToStorage(todos);
+            
+            // 전체 새로고침 대신 필요한 부분만 업데이트
+            renderCalendar();
+            renderTodoList();
+            const selectedString = formatDateString(selectedDate);
+            selectDay(selectedString);
+            
+            showSuccessMessage('할 일이 수정되었습니다');
+        }
+    }
+
+    function deleteTodo(todoId, title) {
+        if (confirm(`"${title}" 할 일을 삭제하시겠습니까?`)) {
+            const todoIndex = todos.findIndex(t => t.id === todoId || t.title === title);
+            if (todoIndex !== -1) {
+                todos.splice(todoIndex, 1);
+            }
+            
+            const eventIndex = events.findIndex(e => 
+                e.title === title && 
+                e.type === 'personal' &&
+                formatDateString(e.date) === formatDateString(selectedDate)
+            );
+            if (eventIndex !== -1) {
+                events.splice(eventIndex, 1);
+            }
+            
+            window.todos = todos;
+            
+            saveEventsToStorage(events);
+            saveTodosToStorage(todos);
+            
+            // 전체 새로고침 대신 필요한 부분만 업데이트
+            renderCalendar();
+            renderTodoList();
+            const selectedString = formatDateString(selectedDate);
+            selectDay(selectedString);
+            
+            showSuccessMessage('할 일이 삭제되었습니다');
         }
     }
 
@@ -507,13 +676,38 @@ function initCalendar() {
         });
     }
 
-    // 초기 렌더링
     renderCalendar();
     renderMeetingList();
     renderTodoList();
+    
+    // 새로고침인 경우에만 선택 상태 유지 (오버레이는 항상 숨김)
+    if (isReload && selectedDate.getTime() !== todayOnlyDate.getTime()) {
+        const dateString = formatDateString(selectedDate);
+        const selectedCell = document.querySelector(`.calendar-day-cell[data-date="${dateString}"]`);
+        if (selectedCell) {
+            selectedCell.classList.add('selected');
+        }
+    }
 }
 
-// 페이지 로드 시 초기화
+function showSuccessMessage(msg) {
+    const div = document.createElement("div");
+    div.textContent = msg;
+    Object.assign(div.style, {
+        position: "fixed",
+        top: "24px",
+        right: "24px",
+        background: "#10b981",
+        color: "#fff",
+        padding: "12px 20px",
+        borderRadius: "8px",
+        zIndex: "9999",
+        boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)"
+    });
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 2500);
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initCalendar);
 } else {

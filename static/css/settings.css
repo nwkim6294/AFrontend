@@ -21,32 +21,43 @@
     font-size: 16px;
 }
 
-/* 설정 메인 메뉴 */
-.settings-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.settings-menu-item {
+/* 개인정보 섹션 (접기/펼치기) */
+.personal-info-section {
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 16px;
-    padding: 24px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.personal-info-header {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
+    padding: 24px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.settings-menu-item:hover {
-    border-color: #8E44AD;
+.personal-info-header:hover {
     background: #f9fafb;
-    transform: translateX(4px);
 }
 
-.menu-item-icon {
+.personal-info-content {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.personal-info-section.expanded .personal-info-content {
+    padding: 0 32px 32px 32px;
+    max-height: 1000px;
+    opacity: 1;
+}
+
+.personal-info-header .section-icon {
     width: 48px;
     height: 48px;
     border-radius: 12px;
@@ -58,71 +69,33 @@
     flex-shrink: 0;
 }
 
-.menu-item-content {
+.personal-info-header .section-title {
     flex: 1;
 }
 
-.menu-item-content h3 {
-    font-size: 18px;
+.personal-info-header .section-title h3 {
+    font-size: 20px;
     font-weight: bold;
     color: #111827;
     margin-bottom: 4px;
 }
 
-.menu-item-content p {
+.personal-info-header .section-title p {
     font-size: 14px;
     color: #6b7280;
 }
 
-.menu-item-arrow {
+.toggle-icon {
     color: #9ca3af;
-    flex-shrink: 0;
+    transition: transform 0.3s ease;
 }
 
-/* 세부 페이지 */
-.settings-detail-page {
-    animation: slideIn 0.3s ease;
+.personal-info-section.expanded .toggle-icon {
+    transform: rotate(180deg);
 }
 
-.settings-detail-page.hidden {
-    display: none;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* 뒤로가기 버튼 */
-.back-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    margin-bottom: 24px;
-    background: none;
-    border: none;
-    border-radius: 8px;
-    color: #6b7280;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.back-button:hover {
-    background: #f3f4f6;
-    color: #8E44AD;
-}
-
-/* 설정 섹션 */
-.settings-section {
+/* 챗봇 가이드 메뉴 */
+.chatbot-guide-menu {
     background: white;
     border: 1px solid #e5e7eb;
     border-radius: 16px;
@@ -160,6 +133,167 @@
 .section-title p {
     font-size: 14px;
     color: #6b7280;
+}
+
+.guide-menu-item {
+    padding: 20px;
+    border: 1px solid #f3f4f6;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.guide-menu-item:last-child {
+    margin-bottom: 0;
+}
+
+.guide-menu-item:hover {
+    border-color: #8E44AD;
+    background: #f9fafb;
+    transform: translateX(4px);
+}
+
+.guide-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f3e5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8E44AD;
+    flex-shrink: 0;
+}
+
+.guide-content {
+    flex: 1;
+}
+
+.guide-content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.guide-content p {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.guide-arrow {
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+/* 가이드 상세 페이지 */
+.guide-detail-page {
+    display: none;
+    animation: slideIn 0.3s ease;
+}
+
+.guide-detail-page.active {
+    display: block;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin-bottom: 24px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.back-button:hover {
+    background: #f3f4f6;
+    color: #8E44AD;
+}
+
+.guide-detail-section {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px;
+}
+
+.guide-detail-section h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.guide-detail-section p {
+    font-size: 15px;
+    color: #374151;
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.guide-detail-section ul {
+    margin: 16px 0;
+    padding-left: 20px;
+}
+
+.guide-detail-section li {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.8;
+    margin-bottom: 8px;
+}
+
+.feature-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.feature-box strong {
+    display: block;
+    color: #8E44AD;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.example-box {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 4px;
+}
+
+.example-box p {
+    color: #92400e;
+    font-size: 14px;
+    margin: 0;
 }
 
 /* 폼 요소 */
@@ -211,114 +345,6 @@
     box-shadow: 0 0 0 3px #e8d5f0;
 }
 
-/* 키워드 태그 */
-.keyword-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.keyword-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background: #f3e5f5;
-    color: #8E44AD;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-/* 단어 사전 */
-.dictionary-search {
-    position: relative;
-    margin-bottom: 24px;
-}
-
-.dictionary-search input {
-    padding-left: 44px;
-}
-
-.search-icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #9ca3af;
-    pointer-events: none;
-}
-
-.dictionary-list {
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.dictionary-item {
-    padding: 20px;
-    border: 1px solid #f3f4f6;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    transition: all 0.2s;
-}
-
-.dictionary-item:hover {
-    background: #f9fafb;
-    border-color: #e5e7eb;
-}
-
-.dictionary-term {
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 8px;
-    font-size: 15px;
-}
-
-.dictionary-definition {
-    font-size: 14px;
-    color: #6b7280;
-    line-height: 1.6;
-}
-
-/* 하이라이트 옵션 */
-.highlight-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-
-.highlight-option {
-    padding: 20px;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.highlight-option:hover {
-    border-color: #8E44AD;
-    background: #f9fafb;
-}
-
-.highlight-option.active {
-    border-color: #8E44AD;
-    background: #f3e5f5;
-}
-
-.highlight-option-title {
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 6px;
-    font-size: 15px;
-}
-
-.highlight-option-desc {
-    font-size: 13px;
-    color: #6b7280;
-    line-height: 1.5;
-}
-
 /* 저장 버튼 */
 .save-button {
     display: flex;
@@ -348,30 +374,38 @@
     transform: translateY(0);
 }
 
+/* 애니메이션 */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
     .settings-container {
         padding: 16px;
     }
 
-    .settings-menu-item {
-        padding: 20px;
-    }
-
-    .menu-item-icon {
-        width: 40px;
-        height: 40px;
-    }
-
-    .menu-item-content h3 {
-        font-size: 16px;
-    }
-
-    .highlight-options {
-        grid-template-columns: 1fr;
-    }
-
-    .settings-section {
+    .personal-info-section,
+    .chatbot-guide-menu,
+    .guide-detail-section {
         padding: 24px;
     }
 }
