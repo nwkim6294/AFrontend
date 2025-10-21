@@ -309,7 +309,9 @@ function initHome() {
     renderHomeTodoList(globalEvents, globalTodos);
     renderImportantMeetings(globalEvents);
     renderRecentMeetings(globalEvents);
-    
+    // 로그인 시 유저 이름 표시
+    saveUserFromJwt(); // 소셜로그인시 사이드바부분 사용자명,이메일 표시
+    displayUserName(); //  여기에 추가
     console.log('✅ 홈 페이지 초기화 완료');
 }
 
@@ -339,4 +341,77 @@ if (document.readyState === 'loading') {
 // 회의록 관리 페이지로 이동
 function goToMeetings() {
     window.location.href = 'meetings.html';
+}
+
+// 유저 이름 표시 기능 추가 364,365,379~430 번째 줄까지
+function getCookie(name) {
+  const cookies = document.cookie.split(";").map(c => c.trim());
+  for (const cookie of cookies) {
+    if (cookie.startsWith(name + "=")) {
+      return cookie.substring(name.length + 1);
+    }
+  }
+  return null;
+}
+// 한글 compatible JWT 디코딩 함수 사용
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) { return null; }
+}
+
+function displayUserName() {
+  // 1. localStorage 우선, 없으면 JWT 쿠키 사용
+  let user = null;
+  const userData = localStorage.getItem("user");
+  if (userData) {
+    try { user = JSON.parse(userData); } catch(e) { user = null; }
+  } else {
+    // localStorage에 없으면 jwt 쿠키에서 email, name 등 추출
+    const token = getCookie('jwt');
+    if (token) {
+      const payload = parseJwt(token);
+      if (payload) {
+        user = {
+          name: payload.name || payload.email || payload.sub || "사용자",
+          email: payload.email || ""
+        };
+      }
+    }
+  }
+  // 화면에 출력
+  const nameElement = document.querySelector("#user-name");
+  if (user && nameElement) {
+    console.log(user);
+    nameElement.textContent = user.name;
+    console.log("✅ 로그인 사용자 표시:", user.name);
+  } else {
+    console.warn("ℹ️ 로그인 정보 없음, 로그인 페이지로 이동");
+    // window.location.href = "login.html";
+  }
+}
+
+// localStorage 변경 감지
+window.addEventListener('storage', (e) => {
+    if (e.key === STORAGE_KEY || e.key === TODO_STORAGE_KEY) {
+        console.log('🔄 [홈] localStorage 변경 감지');
+        window.refreshHomeData();
+    }
+});
+
+// 페이지 로드 시 초기화
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHome);
+} else {
+    initHome();
+}
+
+// 회의록 관리 페이지로 이동
+function goToMeetings() {
+    window.location.href = 'meetings.html';  // 회의록 관리 페이지 경로
 }

@@ -23,14 +23,15 @@
       <!-- Main Page -->
       <div id="mainPage" class="content-wrapper">
         <div class="page-header">
-          <h2>안녕하세요, 홍길동님</h2>
+          <!-- 이부분 현재 로그인한 사용자의 이름을 가져오기위해 수정 -->
+          <h2>안녕하세요, <span id="user-name">사용자</span>님</h2>
           <p id="current-date-display">오늘도 생산적인 하루를 만들어가세요</p>
         </div>
 
         <div class="cta-banner">
           <h3>새로운 회의를 시작할 준비가 되셨나요?</h3>
           <p>실시간 STT 변환과 AI 기반 회의록 자동 생성을 경험해보세요</p>
-          <button class="cta-btn" onclick="changePage('recording')">
+          <button class="cta-btn" onclick="window.location.href='recordSetting.html'">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 5v14m-7-7h14" />
             </svg>
@@ -162,6 +163,9 @@
         const sidebar = document.getElementById("sidebar-container");
         sidebar.innerHTML = html;
 
+      // 여기에 유저 정보 주입 함수 호출 추가
+      injectUserInfo();
+      displayUserName(); // 사이드바/메인별로 selector 조정
         const currentPage = window.location.pathname.split("/").pop();
         const navItems = sidebar.querySelectorAll(".nav-menu a");
 

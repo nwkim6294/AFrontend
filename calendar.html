@@ -111,49 +111,5 @@
     <script src="static/js/app.js"></script>
     <script src="static/js/calendar.js"></script>
     
-    <script>
-        // 챗봇 로드
-        fetch("components/chatbot.html")
-            .then(res => res.text())
-            .then(html => {
-                const container = document.getElementById("chatbot-container");
-                container.innerHTML = html;
-
-                // DOM 바인딩
-                const closeBtn = container.querySelector(".close-chat-btn");
-                const sendBtn = container.querySelector(".send-btn");
-                const chatInput = container.querySelector("#chatInput");
-                const floatingBtn = document.getElementById("floatingChatBtn");
-
-                if (closeBtn) closeBtn.addEventListener("click", closeChat);
-                if (sendBtn) sendBtn.addEventListener("click", sendMessage);
-                if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
-                if (floatingBtn) floatingBtn.addEventListener("click", openChat);
-            });
-
-        // 사이드바 로드 + active 처리
-        fetch("components/sidebar.html")
-            .then(res => res.text())
-            .then(html => {
-                const sidebar = document.getElementById("sidebar-container");
-                sidebar.innerHTML = html;
-                console.log("✅ sidebar.html 삽입 완료");
-
-                // 현재 페이지 파일명 가져오기
-                const currentPage = window.location.pathname.split("/").pop();
-
-                // 모든 nav-item 탐색
-                const navItems = sidebar.querySelectorAll(".nav-menu a");
-
-                navItems.forEach(item => {
-                    const linkPath = item.getAttribute("href");
-                    if (linkPath === currentPage) {
-                        item.classList.add("active");
-                    } else {
-                        item.classList.remove("active");
-                    }
-                });
-            });
-    </script>
 </body>
 </html>

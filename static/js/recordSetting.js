@@ -1,48 +1,169 @@
-
 /* ===============================
    Chatbot & Sidebar Fetch
 =================================*/
+document.addEventListener("DOMContentLoaded", () => {
+    // 챗봇 로드
+    fetch("components/chatbot.html")
+        .then(res => res.text())
+        .then(html => {
+            const container = document.getElementById("chatbot-container");
+            container.innerHTML = html;
 
-fetch("components/chatbot.html")
-    .then(res => res.text())
-    .then(html => {
-    const container = document.getElementById("chatbot-container");
-    container.innerHTML = html;
+            const closeBtn = container.querySelector(".close-chat-btn");
+            const sendBtn = container.querySelector(".send-btn");
+            const chatInput = container.querySelector("#chatInput");
+            const floatingBtn = document.getElementById("floatingChatBtn");
 
-    // DOM 바인딩
-    const closeBtn = container.querySelector(".close-chat-btn");
-    const sendBtn = container.querySelector(".send-btn");
-    const chatInput = container.querySelector("#chatInput");
-    const floatingBtn = document.getElementById("floatingChatBtn");
+            if (closeBtn) closeBtn.addEventListener("click", closeChat);
+            if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+            if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
+            if (floatingBtn) floatingBtn.addEventListener("click", openChat);
+        });
+    
+    // 사이드바 로드
+    fetch("components/sidebar.html")
+        .then(res => res.text())
+        .then(html => {
+            const sidebar = document.getElementById("sidebar-container");
+            sidebar.innerHTML = html;
 
-    if (closeBtn) closeBtn.addEventListener("click", closeChat);
-    if (sendBtn) sendBtn.addEventListener("click", sendMessage);
-    if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
-    if (floatingBtn) floatingBtn.addEventListener("click", openChat);
-    });
+            // ✅ 사이드바 로드 후 사용자 정보 주입
+            injectUserInfo();
 
+            // 현재 페이지 활성화
+            const currentPage = window.location.pathname.split("/").pop();
+            const navItems = sidebar.querySelectorAll(".nav-menu a");
 
-fetch("components/sidebar.html")
-  .then(res => res.text())
-  .then(html => {
-    const sidebar = document.getElementById("sidebar-container");
-    sidebar.innerHTML = html;
-
-    const currentPage = window.location.pathname.split("/").pop();
-    const navItems = sidebar.querySelectorAll(".nav-menu a");
-
-    navItems.forEach(item => {
-      const linkPath = item.getAttribute("href");
-      if (linkPath === currentPage) {
-        item.classList.add("active");
-      } else {
-        item.classList.remove("active");
-      }
-    });
-  });
+            navItems.forEach(item => {
+                const linkPath = item.getAttribute("href");
+                if (linkPath === currentPage) {
+                    item.classList.add("active");
+                } else {
+                    item.classList.remove("active");
+                }
+            });
+        })
+        .catch(error => {
+            console.error('사이드바 로드 실패:', error);
+        });
+});
 
 /* ===============================
-공통 메시지 함수
+   사용자 정보 표시 함수
+=================================*/
+function injectUserInfo() {
+    // localStorage에서 사용자 정보 가져오기
+    let user = null;
+    const userData = localStorage.getItem("user");
+    
+    if (userData) {
+        try { 
+            user = JSON.parse(userData); 
+        } catch(e) { 
+            console.error('사용자 정보 파싱 실패:', e);
+        }
+    }
+    
+    // JWT 토큰에서 정보 추출 시도
+    if (!user) {
+        const token = getCookie('jwt') || localStorage.getItem('accessToken');
+        if (token) {
+            const payload = parseJwt(token);
+            if (payload) {
+                user = { 
+                    name: payload.name || payload.email || "사용자", 
+                    email: payload.email || "" 
+                };
+            }
+        }
+    }
+
+    // 사용자 정보가 있으면 표시
+    if (user) {
+        // 이름 표시 (.user-name 셀렉터 사용)
+        document.querySelectorAll(".user-name").forEach(el => {
+            el.textContent = user.name || "사용자";
+        });
+        
+        // 이메일 표시
+        document.querySelectorAll(".user-email").forEach(el => {
+            el.textContent = user.email || "";
+        });
+        
+        // 아바타 표시
+        document.querySelectorAll(".user-avatar").forEach(el => {
+            el.textContent = user.name ? user.name.charAt(0).toUpperCase() : "U";
+        });
+        
+        console.log("✅ 로그인 사용자 표시:", user.name);
+    } else {
+        console.warn("⚠️ 로그인 정보 없음");
+        // 필요시 로그인 페이지로 리다이렉트
+        // window.location.href = 'login.html';
+    }
+}
+
+/* ===============================
+   유틸리티 함수
+=================================*/
+function getCookie(name) {
+    const cookies = document.cookie.split(";").map(c => c.trim());
+    for (const cookie of cookies) {
+        if (cookie.startsWith(name + "=")) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return null;
+}
+
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+        return JSON.parse(jsonPayload);
+    } catch (e) { 
+        console.error('JWT 파싱 실패:', e);
+        return null; 
+    }
+}
+
+/* ===============================
+   챗봇 함수 (app.js에서 가져옴)
+=================================*/
+function openChat() {
+    const chat = document.getElementById("chatBot");
+    if (!chat) return;
+    chat.classList.add("open");
+    const floatingBtn = document.getElementById("floatingChatBtn");
+    if (floatingBtn) floatingBtn.classList.add("hidden");
+    document.body.classList.add("chat-open");
+}
+
+function closeChat() {
+    const chat = document.getElementById("chatBot");
+    if (!chat) return;
+    chat.classList.remove("open");
+    const floatingBtn = document.getElementById("floatingChatBtn");
+    if (floatingBtn) floatingBtn.classList.remove("hidden");
+    document.body.classList.remove("chat-open");
+}
+
+function sendMessage() {
+    console.log("메시지 전송 (UI만)");
+}
+
+function handleChatEnter(e) {
+    if (e.key === "Enter") sendMessage();
+}
+
+/* ===============================
+   공통 메시지 함수
 =================================*/
 function showSuccessMessage(message) {
     const existing = document.querySelector('.success-message');
@@ -124,12 +245,12 @@ let audioContext = null;
 let analyser = null;
 let microphone = null;
 let javascriptNode = null;
-let micStream = null; // 추가: 실제 오디오 스트림 참조용
+let micStream = null;
 
 document.getElementById('micTestBtn').addEventListener('click', async function() {
     if (!isTesting) {
         try {
-            micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); // 전역에 저장
+            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioContext.createAnalyser();
             microphone = audioContext.createMediaStreamSource(micStream);
@@ -164,12 +285,10 @@ document.getElementById('micTestBtn').addEventListener('click', async function()
             showErrorMessage('마이크 접근 권한이 필요합니다');
         }
     } else {
-        // 오디오 리소스 정리
         if (microphone) microphone.disconnect();
         if (javascriptNode) javascriptNode.disconnect();
         if (audioContext) audioContext.close();
 
-        // 여기 추가: 실제 마이크 사용 중단
         if (micStream) {
             micStream.getTracks().forEach(track => track.stop());
             micStream = null;
@@ -190,7 +309,6 @@ document.getElementById('micTestBtn').addEventListener('click', async function()
         showSuccessMessage('마이크 테스트가 종료되었습니다');
     }
 });
-
 
 /* ===============================
    참석자 추가/삭제
@@ -256,43 +374,8 @@ document.querySelectorAll('.remove-keyword-btn').forEach(btn => {
     });
 });
 
-// /* ===============================
-//    회의 시작 / 취소
-// =================================*/
-// document.querySelector('.btn-primary').addEventListener('click', () => {
-//     const title = document.getElementById('meeting-title');
-//     const date = document.getElementById('meeting-date');
-
-//     title.classList.remove('error');
-//     date.classList.remove('error');
-
-//     if (!title.value.trim()) {
-//         title.classList.add('error');
-//         showErrorMessage('회의 제목을 입력해주세요');
-//         return;
-//     }
-//     if (!date.value) {
-//         date.classList.add('error');
-//         showErrorMessage('회의 일시를 선택해주세요');
-//         return;
-//     }
-
-//     showSuccessMessage('회의가 시작됩니다!');
-    
-//     // 1초(1000ms) 후에 페이지 이동
-//     setTimeout(() => {
-//         window.location.href = 'recording.html';
-//     }, 1000);
-// });
-
-
-// document.querySelector('.btn-secondary').addEventListener('click', () => {
-//     if (confirm('입력한 내용이 저장되지 않습니다. 취소하시겠습니까?')) {
-//         window.history.back();
-//     }
-// });
 /* ===============================
-   회의 시작 / 취소 (수정된 버전)
+   회의 시작 / 취소
 =================================*/
 document.querySelector('.btn-primary').addEventListener('click', () => {
     const title = document.getElementById('meeting-title');
@@ -337,11 +420,17 @@ document.querySelector('.btn-primary').addEventListener('click', () => {
 
     showSuccessMessage('회의가 시작됩니다!');
     
-    // 1초 후에 페이지 이동
     setTimeout(() => {
         window.location.href = 'recording.html';
     }, 1000);
 });
+
+document.querySelector('.btn-secondary').addEventListener('click', () => {
+    if (confirm('입력한 내용이 저장되지 않습니다. 취소하시겠습니까?')) {
+        window.history.back();
+    }
+});
+
 /* ===============================
    기본 날짜 설정
 =================================*/

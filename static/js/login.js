@@ -90,36 +90,6 @@ function hideAlerts() {
 /* ===============================
     로그인 폼 제출 처리 -> Spring
 =================================*/
-/* signinForm.addEventListener('submit', function(e) {
-    e.preventDefault(); // 기본 폼 제출 방지
-    
-    const email = document.getElementById('signin-email').value;
-    const password = document.getElementById('signin-password').value;
-    
-    // 간단한 입력값 확인
-    if (!email || !password) {
-        return;
-    }
-    
-    console.log('로그인 시도:', { email, password });
-    
-    // 실제 로그인 API 호출
-    fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    })
-    .then(response => response.json())
-    .then(data => {
-        // 백엔드에서 success=true 반환 시
-        if (data.success) {
-            window.location.href = '/home.html'; // 로그인 후 홈으로 이동
-        }
-    });
-    // 임시 처리 (API 없이도 이동 테스트 가능)
-    window.location.href = '/home.html';
-}); */
-
 /* 로그인 폼 제출 처리 추가된 부분*/
 signinForm.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -146,8 +116,10 @@ signinForm.addEventListener('submit', async function(e) {
         if (response.ok && data.token) {
             // 성공 시 JWT 토큰 저장
             localStorage.setItem('accessToken', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
             // 이 부분 추가!
             console.log('발급된 JWT 토큰:', data.token);
+            console.log('로그인 사용자 정보:', data.user);
             // 알림 및 메인 페이지 이동
             alert('로그인 성공!');
             window.location.href = '/home.html'; 
@@ -162,7 +134,8 @@ signinForm.addEventListener('submit', async function(e) {
 
 
 /* ===============================
-/* 회원가입 폼 제출 처리  */
+    회원가입 폼 제출 처리 
+ ===============================*/
 signupForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -203,8 +176,6 @@ signupForm.addEventListener('submit', async function(e) {
         alert('서버 오류: ' + error.message);
     }
 });
-/* ===============================
-
 
 /* ===============================
     회원가입 폼 제출 처리 -> Spring
@@ -278,17 +249,12 @@ signupForm.addEventListener('submit', function(e) {
             showAlert(data.message, 'error');
         }
     });
-    
-/*     // 임시 처리
-    showAlert('회원가입 성공!', 'success');
-    setTimeout(() => {
-        signinTab.click();
-        signupForm.reset();
-    }, 2000); */
+
 });
 
-// JWT 토큰 발급하여 소셜 로그인 구현 코드
+// JWT 토큰 발급하여 소셜 로그인 구현 코드 20일 수정
 function openSocialLogin(url) {
+  alert("소셜로그인 확인")
   const width = 600;
   const height = 700;
   const left = (window.innerWidth - width) / 2;
@@ -298,50 +264,34 @@ function openSocialLogin(url) {
 
   window.addEventListener('message', (event) => {
     // 보안 위해 도메인 체크 (예: localhost)
+    alert("이벤트 동작 확인")
     if (event.origin !== window.location.origin) return;
 
-    const { token } = event.data;
+    const { token, user } = event.data;
     if (token) {
       localStorage.setItem('jwtToken', token);
-      popup.close();
-      // 로그인 성공 후 처리 (페이지 이동 등)
-      window.location.reload();
+      alert("로그인 완료1")
     }
+    if (user) {
+      console.log(JSON.stringify(user))
+      localStorage.setItem('user', JSON.stringify(user));
+      alert("사용자 정보")
+    }
+    popup.close();
+    // 로그인 성공 후 명확한 페이지 이동 권장
+    window.location.href = '/home.html';
   });
 }
 
 // 소셜 로그인 버튼 클릭시, 바로 현재창에서 백엔드 OAuth2 경로로 이동
 googleLoginBtn.addEventListener('click', () => {
-  // 현재 창에서 이동 (새 창 X)
-  // 구글 로그인 구현
   window.location.href = 'http://localhost:8080/oauth2/authorization/google';
 });
 
- // 카카오 로그인 구현
 kakaoLoginBtn.addEventListener('click', () => {
   window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
 });
 
-
-/* // Google 로그인 - 메시지 없이 처리
-const googleLoginBtn = document.getElementById('googleLoginBtn');
-googleLoginBtn.addEventListener('click', function() {
-    console.log('Google 로그인 시작');
-    
-    // Google OAuth 2.0 로그인 구현
-    // Google API 에 인증 요청을 보내려면 이렇게 작성해야함
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
-});
-
-// 카카오 로그인 추가
-const kakaoLoginBtn = document.getElementById('kakaoLoginBtn');
-kakaoLoginBtn.addEventListener('click', function() {
-    console.log('KaKao 로그인 시작');
-    
-    // KaKao OAuth 2.0 로그인 구현
-    window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
-});
- */
 // Google 회원가입 - 메시지 없이 처리
 const googleSignupBtn = document.getElementById('googleSignupBtn');
 googleSignupBtn.addEventListener('click', function() {

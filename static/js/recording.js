@@ -1,76 +1,145 @@
 /* ===============================
    Chatbot & Sidebar Fetch
 =================================*/
-
-fetch("components/chatbot.html")
+document.addEventListener("DOMContentLoaded", () => {
+  // 챗봇 로드
+  fetch("components/chatbot.html")
     .then(res => res.text())
     .then(html => {
-    const container = document.getElementById("chatbot-container");
-    container.innerHTML = html;
+      const container = document.getElementById("chatbot-container");
+      container.innerHTML = html;
 
-    // DOM 바인딩
-    const closeBtn = container.querySelector(".close-chat-btn");
-    const sendBtn = container.querySelector(".send-btn");
-    const chatInput = container.querySelector("#chatInput");
-    const floatingBtn = document.getElementById("floatingChatBtn");
+      const closeBtn = container.querySelector(".close-chat-btn");
+      const sendBtn = container.querySelector(".send-btn");
+      const chatInput = container.querySelector("#chatInput");
+      const floatingBtn = document.getElementById("floatingChatBtn");
 
-    if (closeBtn) closeBtn.addEventListener("click", closeChat);
-    if (sendBtn) sendBtn.addEventListener("click", sendMessage);
-    if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
-    if (floatingBtn) floatingBtn.addEventListener("click", openChat);
+      if (closeBtn) closeBtn.addEventListener("click", closeChat);
+      if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+      if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
+      if (floatingBtn) floatingBtn.addEventListener("click", openChat);
     });
 
+  // 사이드바 로드
+  fetch("components/sidebar.html")
+    .then(res => res.text())
+    .then(html => {
+      const sidebar = document.getElementById("sidebar-container");
+      sidebar.innerHTML = html;
 
-fetch("components/sidebar.html")
-  .then(res => res.text())
-  .then(html => {
-    const sidebar = document.getElementById("sidebar-container");
-    sidebar.innerHTML = html;
+      // ✅ 사이드바 로드 후 사용자 정보 주입
+      injectUserInfo();
 
-    const currentPage = window.location.pathname.split("/").pop();
-    const navItems = sidebar.querySelectorAll(".nav-menu a");
+      // 현재 페이지 활성화
+      const currentPage = window.location.pathname.split("/").pop();
+      const navItems = sidebar.querySelectorAll(".nav-menu a");
 
-    navItems.forEach(item => {
-      const linkPath = item.getAttribute("href");
-      if (linkPath === currentPage) {
-        item.classList.add("active");
-      } else {
-        item.classList.remove("active");
-      }
+      navItems.forEach(item => {
+        const linkPath = item.getAttribute("href");
+
+        // recordSetting.html 또는 recording.html인 경우 회의록 작성 메뉴 활성화
+        if ((currentPage === 'recordSetting.html' || currentPage === 'recording.html') &&
+          linkPath === 'recordSetting.html') {
+          item.classList.add("active");
+        } else if (linkPath === currentPage) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
+    })
+    .catch(error => {
+      console.error('사이드바 로드 실패:', error);
     });
-  });
+});
 
-    function openConfirmModal(title, message, onConfirm) {
-    const modal = document.getElementById('confirmModal');
-    const titleEl = document.getElementById('confirmTitle');
-    const msgEl = document.getElementById('confirmMessage');
-    const okBtn = document.getElementById('confirmOkBtn');
-    const cancelBtn = document.getElementById('confirmCancelBtn');
 
-    titleEl.textContent = title;
-    msgEl.innerHTML = message;
+/* ===============================
+   사용자 정보 표시 함수
+=================================*/
+function injectUserInfo() {
+  // localStorage에서 사용자 정보 가져오기
+  let user = null;
+  const userData = localStorage.getItem("user");
 
-    modal.classList.remove('hidden');
-
-    // 클릭 핸들러
-    const closeModal = () => modal.classList.add('hidden');
-    cancelBtn.onclick = closeModal;
-    okBtn.onclick = () => {
-        closeModal();
-        if (onConfirm) onConfirm();
-    };
+  if (userData) {
+    try {
+      user = JSON.parse(userData);
+    } catch (e) {
+      console.error('사용자 정보 파싱 실패:', e);
     }
+  }
 
-  /* ===============================
+  // JWT 토큰에서 정보 추출 시도
+  if (!user) {
+    const token = getCookie('jwt') || localStorage.getItem('accessToken');
+    if (token) {
+      const payload = parseJwt(token);
+      if (payload) {
+        user = {
+          name: payload.name || payload.email || "사용자",
+          email: payload.email || ""
+        };
+      }
+    }
+  }
+
+  // 사용자 정보가 있으면 표시
+  if (user) {
+    // 이름 표시 (.user-name 셀렉터 사용)
+    document.querySelectorAll(".user-name").forEach(el => {
+      el.textContent = user.name || "사용자";
+    });
+
+    // 이메일 표시
+    document.querySelectorAll(".user-email").forEach(el => {
+      el.textContent = user.email || "";
+    });
+
+    // 아바타 표시
+    document.querySelectorAll(".user-avatar").forEach(el => {
+      el.textContent = user.name ? user.name.charAt(0).toUpperCase() : "U";
+    });
+
+    console.log("✅ 로그인 사용자 표시:", user.name);
+  } else {
+    console.warn("⚠️ 로그인 정보 없음");
+    // 필요시 로그인 페이지로 리다이렉트
+    // window.location.href = 'login.html';
+  }
+}
+
+function openConfirmModal(title, message, onConfirm) {
+  const modal = document.getElementById('confirmModal');
+  const titleEl = document.getElementById('confirmTitle');
+  const msgEl = document.getElementById('confirmMessage');
+  const okBtn = document.getElementById('confirmOkBtn');
+  const cancelBtn = document.getElementById('confirmCancelBtn');
+
+  titleEl.textContent = title;
+  msgEl.innerHTML = message;
+
+  modal.classList.remove('hidden');
+
+  // 클릭 핸들러
+  const closeModal = () => modal.classList.add('hidden');
+  cancelBtn.onclick = closeModal;
+  okBtn.onclick = () => {
+    closeModal();
+    if (onConfirm) onConfirm();
+  };
+}
+
+/* ===============================
 공통 메시지 함수
 =================================*/
 function showSuccessMessage(message) {
-    const existing = document.querySelector('.success-message');
-    if (existing) existing.remove();
+  const existing = document.querySelector('.success-message');
+  if (existing) existing.remove();
 
-    const msg = document.createElement('div');
-    msg.className = 'success-message';
-    msg.style.cssText = `
+  const msg = document.createElement('div');
+  msg.className = 'success-message';
+  msg.style.cssText = `
         position: fixed;
         top: 24px;
         right: 24px;
@@ -85,27 +154,27 @@ function showSuccessMessage(message) {
         gap: 12px;
         animation: slideInRight 0.3s ease;
     `;
-    msg.innerHTML = `
+  msg.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="20 6 9 17 4 12"/>
         </svg>
         <span>${message}</span>
     `;
-    document.body.appendChild(msg);
+  document.body.appendChild(msg);
 
-    setTimeout(() => {
-        msg.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => msg.remove(), 300);
-    }, 3000);
+  setTimeout(() => {
+    msg.style.animation = 'slideOutRight 0.3s ease';
+    setTimeout(() => msg.remove(), 300);
+  }, 3000);
 }
 
 function showErrorMessage(message) {
-    const existing = document.querySelector('.error-message');
-    if (existing) existing.remove();
+  const existing = document.querySelector('.error-message');
+  if (existing) existing.remove();
 
-    const msg = document.createElement('div');
-    msg.className = 'error-message';
-    msg.style.cssText = `
+  const msg = document.createElement('div');
+  msg.className = 'error-message';
+  msg.style.cssText = `
         position: fixed;
         top: 24px;
         right: 24px;
@@ -120,7 +189,7 @@ function showErrorMessage(message) {
         gap: 12px;
         animation: slideInRight 0.3s ease;
     `;
-    msg.innerHTML = `
+  msg.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
             <line x1="12" y1="8" x2="12" y2="12"/>
@@ -128,96 +197,20 @@ function showErrorMessage(message) {
         </svg>
         <span>${message}</span>
     `;
-    document.body.appendChild(msg);
+  document.body.appendChild(msg);
 
-    setTimeout(() => {
-        msg.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => msg.remove(), 300);
-    }, 3000);
+  setTimeout(() => {
+    msg.style.animation = 'slideOutRight 0.3s ease';
+    setTimeout(() => msg.remove(), 300);
+  }, 3000);
 }
 
-
-// /* ===============================
-//    회의 데이터 로드 및 표시
-// =================================*/
-// let meetingData = null;
-// let isRecording = false;
-
-// function loadMeetingData() {
-//     try {
-//         const stored = localStorage.getItem('currentMeeting');
-//         if (stored) {
-//             meetingData = JSON.parse(stored);
-//             displayMeetingInfo();
-//         }
-//     } catch (e) {
-//         console.error('회의 데이터 로드 실패:', e);
-//     }
-// }
-
-// function displayMeetingInfo() {
-//     if (!meetingData) return;
-
-//     // 회의 제목
-//     document.getElementById('meetingTitle').textContent = meetingData.title || '제목 없음';
-
-//     // 회의 일시
-//     if (meetingData.date) {
-//         const date = new Date(meetingData.date);
-//         const formatted = date.toLocaleString('ko-KR', {
-//             year: 'numeric',
-//             month: 'long',
-//             day: 'numeric',
-//             hour: '2-digit',
-//             minute: '2-digit'
-//         });
-//         document.getElementById('meetingDate').textContent = formatted;
-//     }
-
-//     // 회의 설명
-//     if (meetingData.description && meetingData.description.trim()) {
-//         document.getElementById('meetingDescription').textContent = meetingData.description;
-//     } else {
-//         document.getElementById('descriptionSection').style.display = 'none';
-//     }
-
-//     // 참석자
-//     if (meetingData.participants && meetingData.participants.length > 0) {
-//         const participantsList = document.getElementById('participantsList');
-//         const participantCount = document.getElementById('participantCount');
-        
-//         participantCount.textContent = `${meetingData.participants.length}명`;
-//         participantsList.innerHTML = '';
-
-//         meetingData.participants.forEach(name => {
-//             const chip = document.createElement('div');
-//             chip.className = 'participant-chip';
-//             chip.innerHTML = `
-//                 <div class="participant-avatar-mini">${name.charAt(0)}</div>
-//                 <span>${name}</span>
-//             `;
-//             participantsList.appendChild(chip);
-//         });
-//     } else {
-//         document.getElementById('participantCount').textContent = '0명';
-//     }
-
-//     // 키워드
-//     if (meetingData.keywords && meetingData.keywords.length > 0) {
-//         const keywordsList = document.getElementById('keywordsList');
-//         keywordsList.innerHTML = '';
-
-//         meetingData.keywords.forEach(keyword => {
-//             const chip = document.createElement('span');
-//             chip.className = 'keyword-chip';
-//             chip.textContent = keyword;
-//             keywordsList.appendChild(chip);
-//         });
-//     } else {
-//         document.getElementById('keywordsSection').style.display = 'none';
-//     }
-// }
-
+document.querySelectorAll('.info-card-collapsible .info-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const card = header.closest('.info-card-collapsible');
+    card.classList.toggle('collapsed');
+  });
+});
 
 /* ===============================
    회의 데이터 로드 및 표시
@@ -229,81 +222,81 @@ let mediaRecorder = null;
 let recordedChunks = [];
 
 function loadMeetingData() {
-    try {
-        const stored = localStorage.getItem('currentMeeting');
-        if (stored) {
-            meetingData = JSON.parse(stored);
-            displayMeetingInfo();
-        }
-    } catch (e) {
-        console.error('회의 데이터 로드 실패:', e);
+  try {
+    const stored = localStorage.getItem('currentMeeting');
+    if (stored) {
+      meetingData = JSON.parse(stored);
+      displayMeetingInfo();
     }
+  } catch (e) {
+    console.error('회의 데이터 로드 실패:', e);
+  }
 }
 
 function displayMeetingInfo() {
-    if (!meetingData) return;
+  if (!meetingData) return;
 
-    // 회의 제목
-    document.getElementById('meetingTitle').textContent = meetingData.title || '제목 없음';
+  // 회의 제목
+  document.getElementById('meetingTitle').textContent = meetingData.title || '제목 없음';
 
-    // 회의 일시
-    if (meetingData.date) {
-        const date = new Date(meetingData.date);
-        const formatted = date.toLocaleString('ko-KR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        document.getElementById('meetingDate').textContent = formatted;
-    }
+  // 회의 일시
+  if (meetingData.date) {
+    const date = new Date(meetingData.date);
+    const formatted = date.toLocaleString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    document.getElementById('meetingDate').textContent = formatted;
+  }
 
-    // 회의 설명
-    if (meetingData.description && meetingData.description.trim()) {
-        document.getElementById('meetingDescription').textContent = meetingData.description;
-    } else {
-        document.getElementById('descriptionSection').style.display = 'none';
-    }
+  // 회의 설명
+  if (meetingData.description && meetingData.description.trim()) {
+    document.getElementById('meetingDescription').textContent = meetingData.description;
+  } else {
+    document.getElementById('descriptionSection').style.display = 'none';
+  }
 
-    // 참석자
-    if (meetingData.participants && meetingData.participants.length > 0) {
-        const participantsList = document.getElementById('participantsList');
-        const participantCount = document.getElementById('participantCount');
-        
-        participantCount.textContent = `${meetingData.participants.length}명`;
-        participantsList.innerHTML = '';
+  // 참석자
+  if (meetingData.participants && meetingData.participants.length > 0) {
+    const participantsList = document.getElementById('participantsList');
+    const participantCount = document.getElementById('participantCount');
 
-        meetingData.participants.forEach(name => {
-            const chip = document.createElement('div');
-            chip.className = 'participant-chip';
-            chip.innerHTML = `
+    participantCount.textContent = `${meetingData.participants.length}명`;
+    participantsList.innerHTML = '';
+
+    meetingData.participants.forEach(name => {
+      const chip = document.createElement('div');
+      chip.className = 'participant-chip';
+      chip.innerHTML = `
                 <div class="participant-avatar-mini">${name.charAt(0)}</div>
                 <span>${name}</span>
             `;
-            participantsList.appendChild(chip);
-        });
-    } else {
-        document.getElementById('participantCount').textContent = '0명';
-    }
+      participantsList.appendChild(chip);
+    });
+  } else {
+    document.getElementById('participantCount').textContent = '0명';
+  }
 
-    // 키워드
-    if (meetingData.keywords && meetingData.keywords.length > 0) {
-        const keywordsList = document.getElementById('keywordsList');
-        const keywordCount = document.getElementById('keywordCount');
-        
-        keywordCount.textContent = `${meetingData.keywords.length}개`;
-        keywordsList.innerHTML = '';
+  // 키워드
+  if (meetingData.keywords && meetingData.keywords.length > 0) {
+    const keywordsList = document.getElementById('keywordsList');
+    const keywordCount = document.getElementById('keywordCount');
 
-        meetingData.keywords.forEach(keyword => {
-            const chip = document.createElement('span');
-            chip.className = 'keyword-chip';
-            chip.textContent = keyword;
-            keywordsList.appendChild(chip);
-        });
-    } else {
-        document.getElementById('keywordCount').textContent = '0개';
-    }
+    keywordCount.textContent = `${meetingData.keywords.length}개`;
+    keywordsList.innerHTML = '';
+
+    meetingData.keywords.forEach(keyword => {
+      const chip = document.createElement('span');
+      chip.className = 'keyword-chip';
+      chip.textContent = keyword;
+      keywordsList.appendChild(chip);
+    });
+  } else {
+    document.getElementById('keywordCount').textContent = '0개';
+  }
 }
 /* ===============================
    타이머 기능
@@ -313,35 +306,35 @@ let timerInterval = null;
 let isPaused = false;
 
 function startTimer() {
-    timerInterval = setInterval(() => {
-        if (!isPaused) {
-            timerSeconds++;
-            updateTimerDisplay();
-        }
-    }, 1000);
+  timerInterval = setInterval(() => {
+    if (!isPaused) {
+      timerSeconds++;
+      updateTimerDisplay();
+    }
+  }, 1000);
 }
 
 function updateTimerDisplay() {
-    const hours = Math.floor(timerSeconds / 3600);
-    const minutes = Math.floor((timerSeconds % 3600) / 60);
-    const seconds = timerSeconds % 60;
-    
-    const display = [hours, minutes, seconds]
-        .map(n => String(n).padStart(2, '0'))
-        .join(':');
-    
-    document.getElementById('timerDisplay').textContent = display;
+  const hours = Math.floor(timerSeconds / 3600);
+  const minutes = Math.floor((timerSeconds % 3600) / 60);
+  const seconds = timerSeconds % 60;
+
+  const display = [hours, minutes, seconds]
+    .map(n => String(n).padStart(2, '0'))
+    .join(':');
+
+  document.getElementById('timerDisplay').textContent = display;
 }
 
 function formatTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    
-    if (hours > 0) {
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-    }
-    return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (hours > 0) {
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+  return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
 /* ===============================
@@ -352,32 +345,32 @@ const pauseBtn = document.getElementById('pauseBtn');
 const endBtn = document.getElementById('endBtn');
 
 startBtn.addEventListener('click', () => {
-    isRecording = true;
-    
-    // UI 전환
-    startBtn.style.display = 'none';
-    pauseBtn.style.display = 'flex';
-    
-    // 종료 버튼 활성화
-    endBtn.disabled = false;
-    endBtn.classList.add('active');
-    document.querySelector('.end-warning').textContent = '회의를 종료하려면 클릭하세요';
-    
-    // 상태 변경
-    const micHeader = document.querySelector('.mic-status-header');
-    micHeader.classList.remove('ready', 'paused');
-    micHeader.classList.add('recording');
-    micHeader.querySelector('.mic-status-label').textContent = '녹음 중';
+  isRecording = true;
+
+  // UI 전환
+  startBtn.style.display = 'none';
+  pauseBtn.style.display = 'flex';
+
+  // 종료 버튼 활성화
+  endBtn.disabled = false;
+  endBtn.classList.add('active');
+  document.querySelector('.end-warning').textContent = '회의를 종료하려면 클릭하세요';
+
+  // 상태 변경
+  const micHeader = document.querySelector('.mic-status-header');
+  micHeader.classList.remove('ready', 'paused');
+  micHeader.classList.add('recording');
+  micHeader.querySelector('.mic-status-label').textContent = '녹음 중';
 
 
-    // 타이머 시작
-    startTimer();
-    
-    // 마이크 시작
-    startMicVisualizer();
-    
-    // 데모 데이터 시작
-    startDemoTranscript();
+  // 타이머 시작
+  startTimer();
+
+  // 마이크 시작
+  startMicVisualizer();
+
+  // 데모 데이터 시작
+  startDemoTranscript();
 });
 
 /* ===============================
@@ -427,68 +420,6 @@ pauseBtn.addEventListener('click', async () => {
 /* ===============================
    회의 종료 기능
 =================================*/
-// endBtn.addEventListener('click', () => {
-//     if (!isRecording) return;
-    
-//     if (confirm('회의를 종료하시겠습니까?\n종료하면 회의록 페이지로 이동합니다.')) {
-//         clearInterval(timerInterval);
-        
-//         // 회의 데이터 저장
-//         const finalMeetingData = {
-//             ...meetingData,
-//             duration: timerSeconds,
-//             endTime: new Date().toISOString()
-//         };
-//         localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
-//         localStorage.removeItem('currentMeeting');
-        
-//         // 마이크 정리
-//         stopMicVisualizer();
-        
-//         // 회의록 페이지로 이동
-//         window.location.href = 'meetingDetail.html';
-//     }
-// });
-// endBtn.addEventListener('click', () => {
-//   if (!isRecording) return;
-
-//   if (confirm('회의를 종료하시겠습니까?\n종료하면 회의록 페이지로 이동합니다.')) {
-//     clearInterval(timerInterval);
-
-//     // MediaRecorder 정리 및 파일 저장
-//     if (mediaRecorder && mediaRecorder.state !== "inactive") {
-//       mediaRecorder.stop();
-//       mediaRecorder.onstop = () => {
-//         if (recordedChunks.length === 0) {
-//           showErrorMessage('녹음 데이터가 없습니다.');
-//           return;
-//         }
-//         const blob = new Blob(recordedChunks, { type: "audio/webm" });
-//         const url = URL.createObjectURL(blob);
-//         const a = document.createElement("a");
-//         a.href = url;
-//         a.download = `meeting_audio_${Date.now()}.webm`;
-//         document.body.appendChild(a);
-//         a.click();
-//         document.body.removeChild(a);
-//         URL.revokeObjectURL(url);
-//         showSuccessMessage('녹음 파일이 다운로드되었습니다.');
-//       };
-//     }
-
-//     // 회의 데이터 저장
-//     const finalMeetingData = {
-//       ...meetingData,
-//       duration: timerSeconds,
-//       endTime: new Date().toISOString()
-//     };
-//     localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
-//     localStorage.removeItem('currentMeeting');
-
-//     stopMicVisualizer();
-//     window.location.href = 'meetingDetail.html';
-//   }
-// });
 endBtn.addEventListener('click', () => {
   if (!isRecording) return;
 
@@ -518,26 +449,26 @@ endBtn.addEventListener('click', () => {
         };
       }
 
-    //   const finalMeetingData = {
-    //     ...meetingData,
-    //     duration: timerSeconds,
-    //     endTime: new Date().toISOString()
-    //   };
+      //   const finalMeetingData = {
+      //     ...meetingData,
+      //     duration: timerSeconds,
+      //     endTime: new Date().toISOString()
+      //   };
 
-        const finalMeetingData = {
-    ...meetingData,
-    duration: timerSeconds,
-    endTime: new Date().toISOString(),
-    transcripts: Array.from(document.querySelectorAll('.transcript-item')).map(item => ({
-        speaker: item.querySelector('.speaker-name').textContent,
-        time: item.querySelector('.transcript-time').textContent,
-        text: item.querySelector('.transcript-text').textContent
-    }))
-    };
+      const finalMeetingData = {
+        ...meetingData,
+        duration: timerSeconds,
+        endTime: new Date().toISOString(),
+        transcripts: Array.from(document.querySelectorAll('.transcript-item')).map(item => ({
+          speaker: item.querySelector('.speaker-name').textContent,
+          time: item.querySelector('.transcript-time').textContent,
+          text: item.querySelector('.transcript-text').textContent
+        }))
+      };
 
-    localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
+      localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
 
-    //   localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
+      //   localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
       localStorage.removeItem('currentMeeting');
       stopMicVisualizer();
       window.location.href = 'recordFinish.html';
@@ -554,88 +485,88 @@ const transcriptCountEl = document.getElementById('transcriptCount');
 let transcriptCount = 3; // 초기 샘플 개수
 
 function scrollToBottom() {
-    if (autoScrollCheckbox.checked) {
-        transcriptContent.scrollTop = transcriptContent.scrollHeight;
-    }
+  if (autoScrollCheckbox.checked) {
+    transcriptContent.scrollTop = transcriptContent.scrollHeight;
+  }
 }
 
 function updateTranscriptCount() {
-    transcriptCountEl.textContent = `${transcriptCount}개 발화`;
+  transcriptCountEl.textContent = `${transcriptCount}개 발화`;
 }
 
 // 새 발화 추가 함수
 function addTranscript(speakerName, text) {
-    const item = document.createElement('div');
-    item.className = 'transcript-item';
-    
-    const timestamp = formatTime(timerSeconds);
-    
-    // 키워드 하이라이트 적용
-    let highlightedText = text;
-    if (meetingData && meetingData.keywords) {
-        meetingData.keywords.forEach((keyword, index) => {
-            const regex = new RegExp(`(${keyword})`, 'gi');
-            const colorClass = `keyword-highlight-${index % 6}`; // 6가지 색상 반복
-            highlightedText = highlightedText.replace(regex, `<mark class="${colorClass}">$1</mark>`);
-        });
-    }
-    
-    item.innerHTML = `
+  const item = document.createElement('div');
+  item.className = 'transcript-item';
+
+  const timestamp = formatTime(timerSeconds);
+
+  // 키워드 하이라이트 적용
+  let highlightedText = text;
+  if (meetingData && meetingData.keywords) {
+    meetingData.keywords.forEach((keyword, index) => {
+      const regex = new RegExp(`(${keyword})`, 'gi');
+      const colorClass = `keyword-highlight-${index % 6}`; // 6가지 색상 반복
+      highlightedText = highlightedText.replace(regex, `<mark class="${colorClass}">$1</mark>`);
+    });
+  }
+
+  item.innerHTML = `
         <div class="transcript-meta">
             <span class="speaker-name">${speakerName}</span>
             <span class="transcript-time">${timestamp}</span>
         </div>
         <div class="transcript-text">${highlightedText}</div>
     `;
-    
-    transcriptContent.appendChild(item);
-    transcriptCount++;
-    updateTranscriptCount();
-    scrollToBottom();
-    
-    // 키워드 알림 체크
-    if (meetingData && meetingData.keywords) {
-        checkKeywords(text, timestamp, speakerName);
-    }
+
+  transcriptContent.appendChild(item);
+  transcriptCount++;
+  updateTranscriptCount();
+  scrollToBottom();
+
+  // 키워드 알림 체크
+  if (meetingData && meetingData.keywords) {
+    checkKeywords(text, timestamp, speakerName);
+  }
 }
 
 /* ===============================
    키워드 하이라이트 알림
 =================================*/
 function checkKeywords(text, timestamp, speakerName) {
-    if (!meetingData || !meetingData.keywords) return;
-    
-    meetingData.keywords.forEach(keyword => {
-        if (text.toLowerCase().includes(keyword.toLowerCase())) {
-            showHighlightToast(keyword, text, timestamp, speakerName);
-        }
-    });
+  if (!meetingData || !meetingData.keywords) return;
+
+  meetingData.keywords.forEach(keyword => {
+    if (text.toLowerCase().includes(keyword.toLowerCase())) {
+      showHighlightToast(keyword, text, timestamp, speakerName);
+    }
+  });
 }
 
 function showHighlightToast(keyword, text, timestamp, speakerName) {
-    const container = document.getElementById('highlightToastContainer');
-    
-    const toast = document.createElement('div');
-    toast.className = 'highlight-toast';
-    
-    const colorIndex = meetingData.keywords.indexOf(keyword) % 6; // 색상 번호 계산
-    toast.dataset.color = colorIndex; // 색상 클래스 매칭용
-    
-    const lowerText = text.toLowerCase();
-    const lowerKeyword = keyword.toLowerCase();
-    const keywordIndex = lowerText.indexOf(lowerKeyword);
-    const start = Math.max(0, keywordIndex - 25);
-    const end = Math.min(text.length, keywordIndex + keyword.length + 25);
-    let snippet = text.substring(start, end);
+  const container = document.getElementById('highlightToastContainer');
 
-    if (start > 0) snippet = '...' + snippet;
-    if (end < text.length) snippet = snippet + '...';
+  const toast = document.createElement('div');
+  toast.className = 'highlight-toast';
 
-    const regex = new RegExp(`(${keyword})`, 'gi');
-    const colorClass = `keyword-highlight-${colorIndex}`;
-    snippet = snippet.replace(regex, `<mark class="${colorClass}">$1</mark>`);
+  const colorIndex = meetingData.keywords.indexOf(keyword) % 6; // 색상 번호 계산
+  toast.dataset.color = colorIndex; // 색상 클래스 매칭용
 
-    toast.innerHTML = `
+  const lowerText = text.toLowerCase();
+  const lowerKeyword = keyword.toLowerCase();
+  const keywordIndex = lowerText.indexOf(lowerKeyword);
+  const start = Math.max(0, keywordIndex - 25);
+  const end = Math.min(text.length, keywordIndex + keyword.length + 25);
+  let snippet = text.substring(start, end);
+
+  if (start > 0) snippet = '...' + snippet;
+  if (end < text.length) snippet = snippet + '...';
+
+  const regex = new RegExp(`(${keyword})`, 'gi');
+  const colorClass = `keyword-highlight-${colorIndex}`;
+  snippet = snippet.replace(regex, `<mark class="${colorClass}">$1</mark>`);
+
+  toast.innerHTML = `
         <div class="highlight-toast-header">
             <div class="highlight-icon">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -649,20 +580,20 @@ function showHighlightToast(keyword, text, timestamp, speakerName) {
         <div class="highlight-toast-content">${snippet}</div>
     `;
 
-    container.appendChild(toast);
-    
-    // 클릭 시 해당 위치로 스크롤
-    toast.addEventListener('click', () => {
-        const items = transcriptContent.querySelectorAll('.transcript-item');
-        items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        toast.classList.add('fade-out');
-        setTimeout(() => toast.remove(), 300);
-    });
+  container.appendChild(toast);
 
-    setTimeout(() => {
-        toast.classList.add('fade-out');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
+  // 클릭 시 해당 위치로 스크롤
+  toast.addEventListener('click', () => {
+    const items = transcriptContent.querySelectorAll('.transcript-item');
+    items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 300);
+  });
+
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
 }
 
 /* ===============================
@@ -675,29 +606,6 @@ let microphone = null;
 let micStream = null;
 let animationId = null;
 
-/** 마이크 시작 */
-// async function startMicVisualizer() {
-//   try {
-//     micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//     audioContext = new (window.AudioContext || window.webkitAudioContext)();
-//     analyser = audioContext.createAnalyser();
-//     microphone = audioContext.createMediaStreamSource(micStream);
-
-//     analyser.smoothingTimeConstant = 0.7;
-//     analyser.fftSize = 256;
-
-//     microphone.connect(analyser);
-//     visualize();
-//   } catch (error) {
-//     console.error("마이크 접근 실패:", error);
-
-//     const micHeader = document.querySelector(".mic-status-header");
-//     if (!micHeader) return;
-//     micHeader.classList.add("error");
-//     const micLabel = micHeader.querySelector(".mic-status-label");
-//     if (micLabel) micLabel.textContent = "마이크 오류";
-//   }
-// }
 async function startMicVisualizer() {
   try {
     micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -731,21 +639,6 @@ async function startMicVisualizer() {
 }
 
 /** 일시정지 */
-// function pauseMicVisualizer() {
-//   if (micStream) {
-//     micStream.getTracks().forEach(track => track.stop());
-//     micStream = null;
-//   }
-//   if (audioContext) audioContext.suspend(); // 분석도 멈춤
-//   if (animationId) cancelAnimationFrame(animationId);
-
-//   const micHeader = document.querySelector('.mic-status-header');
-//   micHeader.classList.remove('recording', 'ready');
-//   micHeader.classList.add('paused');
-//   micHeader.querySelector('.mic-status-label').textContent = '일시정지 중';
-// }
-
-/** 일시정지 */
 function pauseMicVisualizer() {
   if (audioContext) audioContext.suspend(); // 분석만 멈춤
   if (animationId) cancelAnimationFrame(animationId);
@@ -765,10 +658,10 @@ async function resumeMicVisualizer() {
     await audioContext.resume();
   }
 
-    const micHeader = document.querySelector('.mic-status-header');
-    micHeader.classList.remove('ready', 'paused');
-    micHeader.classList.add('recording');
-    micHeader.querySelector('.mic-status-label').textContent = '녹음 중';
+  const micHeader = document.querySelector('.mic-status-header');
+  micHeader.classList.remove('ready', 'paused');
+  micHeader.classList.add('recording');
+  micHeader.querySelector('.mic-status-label').textContent = '녹음 중';
 }
 
 /** 완전 종료 */
@@ -817,20 +710,6 @@ function visualize() {
 }
 
 
-
-/* ===============================
-   데모 데이터 생성 (테스트용)
-=================================*/
-// const demoSpeakers = ['홍길동', '김영희', '박철수', '이민지'];
-
-// function getRandomSpeaker() {
-//     // 참석자 목록이 있으면 거기서 랜덤 선택
-//     if (meetingData && meetingData.participants && meetingData.participants.length > 0) {
-//         return meetingData.participants[Math.floor(Math.random() * meetingData.participants.length)];
-//     }
-//     return demoSpeakers[Math.floor(Math.random() * demoSpeakers.length)];
-// }
-
 /* ===============================
    익명 발화자 (발화자 1, 2, 3, ...)
 =================================*/
@@ -842,49 +721,49 @@ function getRandomSpeaker() {
 }
 
 const demoTexts = [
-    "다음 주까지 예산안을 완성해야 합니다. 각 부서별로 필요한 항목을 정리해주세요.",
-    "네, 알겠습니다. 마감일은 정확히 언제인가요?",
-    "마감일은 다음 주 금요일입니다. 예산 초과가 되지 않도록 주의해주세요.",
-    "현재 진행 중인 프로젝트와 예산 분배는 어떻게 하면 좋을까요?",
-    "우선순위를 정해서 중요한 항목부터 예산을 배정하는 게 좋을 것 같습니다.",
-    "그럼 이번 주 내로 1차 예산안을 작성하고, 다음 주 초에 검토하는 건 어떨까요?",
-    "좋습니다. 그렇게 진행하겠습니다. 마감일 전까지는 충분한 시간이 있네요.",
-    "추가로 필요한 자료가 있으면 말씀해주세요. 바로 준비하겠습니다."
+  "다음 주까지 예산안을 완성해야 합니다. 각 부서별로 필요한 항목을 정리해주세요.",
+  "네, 알겠습니다. 마감일은 정확히 언제인가요?",
+  "마감일은 다음 주 금요일입니다. 예산 초과가 되지 않도록 주의해주세요.",
+  "현재 진행 중인 프로젝트와 예산 분배는 어떻게 하면 좋을까요?",
+  "우선순위를 정해서 중요한 항목부터 예산을 배정하는 게 좋을 것 같습니다.",
+  "그럼 이번 주 내로 1차 예산안을 작성하고, 다음 주 초에 검토하는 건 어떨까요?",
+  "좋습니다. 그렇게 진행하겠습니다. 마감일 전까지는 충분한 시간이 있네요.",
+  "추가로 필요한 자료가 있으면 말씀해주세요. 바로 준비하겠습니다."
 ];
 
 let demoIndex = 0;
 
 function startDemoTranscript() {
-    setInterval(() => {
-        if (!isPaused) {
-            const speaker = getRandomSpeaker();
-            const text = demoTexts[demoIndex % demoTexts.length];
-            addTranscript(speaker, text);
-            demoIndex++;
-        }
-    }, 5000); // 5초마다 새 발화 추가
+  setInterval(() => {
+    if (!isPaused) {
+      const speaker = getRandomSpeaker();
+      const text = demoTexts[demoIndex % demoTexts.length];
+      addTranscript(speaker, text);
+      demoIndex++;
+    }
+  }, 5000); // 5초마다 새 발화 추가
 }
 
 /* ===============================
    초기화
 =================================*/
 document.addEventListener('DOMContentLoaded', () => {
-      const micHeader = document.querySelector('.mic-status-header');
-     micHeader.classList.remove('recording', 'paused');
+  const micHeader = document.querySelector('.mic-status-header');
+  micHeader.classList.remove('recording', 'paused');
   micHeader.classList.add('ready');
   micHeader.querySelector('.mic-status-label').textContent = '대기 중';
-    // 회의 데이터 로드
-    loadMeetingData();
-    
-    // 발화 카운트 초기화
-    updateTranscriptCount();
-    
-    // 타이머는 녹음 시작 버튼을 누를 때 시작
-    // 마이크 비주얼라이저도 녹음 시작 버튼을 누를 때 시작
+  // 회의 데이터 로드
+  loadMeetingData();
+
+  // 발화 카운트 초기화
+  updateTranscriptCount();
+
+  // 타이머는 녹음 시작 버튼을 누를 때 시작
+  // 마이크 비주얼라이저도 녹음 시작 버튼을 누를 때 시작
 });
 
 // 페이지 나갈 때 리소스 정리
 window.addEventListener('beforeunload', () => {
-    stopMicVisualizer();
-    clearInterval(timerInterval);
+  stopMicVisualizer();
+  clearInterval(timerInterval);
 });
