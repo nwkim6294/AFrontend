@@ -174,7 +174,7 @@
     overflow-y: auto;
     flex: 1;
     padding: 2px 0;
-    justify-content: center;
+    /* justify-content: center; */
 }
 
 .three-col-grid .meeting-item {
@@ -236,7 +236,7 @@
     overflow-y: auto;
     flex: 1;
     padding: 2px 0;
-    justify-content: center;
+    /* justify-content: center; */
 }
 
 .deadline-item {

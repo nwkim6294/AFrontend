@@ -139,47 +139,7 @@
   
   <script src="static/js/app.js"></script>
   <script src="static/js/home.js"></script>
-  <script>
-    fetch("components/chatbot.html")
-      .then(res => res.text())
-      .then(html => {
-        const container = document.getElementById("chatbot-container");
-        container.innerHTML = html;
-
-        const closeBtn = container.querySelector(".close-chat-btn");
-        const sendBtn = container.querySelector(".send-btn");
-        const chatInput = container.querySelector("#chatInput");
-        const floatingBtn = document.getElementById("floatingChatBtn");
-
-        if (closeBtn) closeBtn.addEventListener("click", closeChat);
-        if (sendBtn) sendBtn.addEventListener("click", sendMessage);
-        if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
-        if (floatingBtn) floatingBtn.addEventListener("click", openChat);
-      });
-
-    fetch("components/sidebar.html")
-      .then(res => res.text())
-      .then(html => {
-        const sidebar = document.getElementById("sidebar-container");
-        sidebar.innerHTML = html;
-
-      // 여기에 유저 정보 주입 함수 호출 추가
-      injectUserInfo();
-      displayUserName(); // 사이드바/메인별로 selector 조정
-        const currentPage = window.location.pathname.split("/").pop();
-        const navItems = sidebar.querySelectorAll(".nav-menu a");
-
-        navItems.forEach(item => {
-          const linkPath = item.getAttribute("href");
-          if (linkPath === currentPage) {
-            item.classList.add("active");
-          } else {
-            item.classList.remove("active");
-          }
-        });
-      });
-  </script>
-
+  
   <link rel="stylesheet" href="static/css/home.css">
 </body>
 

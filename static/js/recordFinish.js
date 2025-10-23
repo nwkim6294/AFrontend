@@ -166,26 +166,40 @@ function showErrorMessage(msg) {
   setTimeout(() => div.remove(), 2500);
 }
 
-/* 전역 변수 */
-let meetingData = null;
-let speakerMappingData = {};
-let actionItems = [];
-let currentEditingTranscriptIndex = -1;
-let activeKeyword = null;
-let isEditingSummary = false;
-let originalSummaryData = {};
-let currentMappingSpeaker = null;
+/* ===============================
+   전역 상태 변수
+=================================*/
+let meetingData = null;                 // 회의 전체 데이터
+let speakerMappingData = {};            // 발화자 ↔ 참석자 매핑 정보
+let actionItems = [];                   // 액션 아이템 리스트
+let currentEditingTranscriptIndex = -1; // 현재 편집 중인 발화 인덱스
+let activeKeyword = null;               // 선택된 하이라이트 키워드
+let isEditingSummary = false;           // 요약 편집 모드 여부
+let originalSummaryData = {};           // 편집 전 요약 데이터 저장
+let currentMappingSpeaker = null;       // 현재 매핑 중인 발화자
 
-/* 회의 데이터 로드 */
-function loadMeetingData() {
-  if (!meetingData) return;
-  actionItems = meetingData.actions || [];
-  displayMeetingInfo();
-  displayTranscripts();
-  generateAISummary();
-  renderActionItems();
+/* ===============================
+   회의 데이터 로드 (Spring API)
+=================================*/
+async function loadMeetingData() {
+  try {
+    const meetingId = localStorage.getItem("currentMeetingId");
+    if (!meetingId) {
+      showErrorMessage("회의 ID가 없습니다.");
+      return;
+    }
+
+  // Spring API로 회의 정보 가져오기
+    const res = await fetch(`http://localhost:8080/api/meetings/${meetingId}`);
+    if (!res.ok) throw new Error("회의 정보를 불러오지 못했습니다.");
+    meetingData = await res.json();
+
+    loadMeetingData(); // 기존 함수 호출 유지
+  } catch (err) {
+    console.error("회의 정보 불러오기 실패:", err);
+    showErrorMessage("서버에서 회의 데이터를 불러오지 못했습니다.");
+  }
 }
-
 /* 회의 정보 표시 */
 function displayMeetingInfo() {
   const title = meetingData.title || "제목 없음";
@@ -217,15 +231,28 @@ function formatDuration(sec) {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-/* 회의 제목 수정 */
-function editMeetingTitle() {
+/* ===============================
+   회의 제목 수정 (PUT 요청) -> Spring
+=================================*/
+async function editMeetingTitle() {
   const el = document.getElementById("meetingTitle");
-  const cur = el.textContent;
-  const newTitle = prompt("회의 제목을 입력하세요:", cur);
-  if (newTitle && newTitle.trim()) {
-      meetingData.title = newTitle.trim();
-      el.textContent = newTitle.trim();
-      showSuccessMessage("회의 제목이 수정되었습니다.");
+  const newTitle = prompt("회의 제목을 입력하세요:", el.textContent);
+  if (!newTitle.trim()) return;
+
+  try {
+    const meetingId = localStorage.getItem("currentMeetingId");
+    // Spring API로 제목 수정 요청
+    const res = await fetch(`http://localhost:8080/api/meetings/${meetingId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: newTitle.trim() })
+    });
+
+    if (!res.ok) throw new Error("수정 실패");
+    el.textContent = newTitle.trim();
+    showSuccessMessage("회의 제목이 수정되었습니다.");
+  } catch (e) {
+    showErrorMessage("서버와 통신 중 오류가 발생했습니다.");
   }
 }
 
@@ -721,19 +748,35 @@ function editTranscript(index) {
   editor.focus();
 }
 
-function saveTranscriptEdit(index) {
+/* ===============================
+   발화 로그 수정 (PUT 요청) -> spring
+=================================*/
+async function saveTranscriptEdit(index) {
   const editor = document.getElementById(`transcript-editor-${index}`);
   const newText = editor.value.trim();
   if (!newText) {
-      showErrorMessage("내용을 입력해주세요.");
-      return;
+    showErrorMessage("내용을 입력해주세요.");
+    return;
   }
 
-  meetingData.transcripts[index].text = newText;
-  currentEditingTranscriptIndex = -1;
-  displayTranscripts();
-  showSuccessMessage("발화 로그가 수정되었습니다.");
+  const transcript = meetingData.transcripts[index];
+  try {
+    const meetingId = localStorage.getItem("currentMeetingId");
+    await fetch(`http://localhost:8080/api/meetings/${meetingId}/transcripts/${index}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: newText })
+    });
+
+    meetingData.transcripts[index].text = newText;
+    displayTranscripts();
+    showSuccessMessage("발화 로그가 수정되었습니다.");
+  } catch (e) {
+    console.error(e);
+    showErrorMessage("서버에 로그를 저장하지 못했습니다.");
+  }
 }
+
 
 function cancelTranscriptEdit(index) {
   currentEditingTranscriptIndex = -1;
@@ -786,11 +829,28 @@ function exportPDF() {
   showErrorMessage("PDF 내보내기 기능은 준비 중입니다.");
 }
 
-function saveMeeting() {
-  const data = collectFinalData();
-  localStorage.setItem("savedMeeting", JSON.stringify(data));
-  showSuccessMessage("회의록이 저장되었습니다.");
+/* ===============================
+   회의록 저장 (POST /summary)
+=================================*/
+async function saveMeeting() {
+  try {
+    const meetingId = localStorage.getItem("currentMeetingId");
+    const data = collectFinalData();
+
+    const res = await fetch(`http://localhost:8080/api/meetings/${meetingId}/summary`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) throw new Error("저장 실패");
+    showSuccessMessage("회의록이 서버에 저장되었습니다.");
+  } catch (e) {
+    console.error(e);
+    showErrorMessage("서버에 회의록 저장 실패");
+  }
 }
+
 
 /* 초기화 */
 document.addEventListener("DOMContentLoaded", () => {

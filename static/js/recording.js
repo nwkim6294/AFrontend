@@ -217,20 +217,33 @@ document.querySelectorAll('.info-card-collapsible .info-header').forEach(header 
 =================================*/
 let meetingData = null;
 let isRecording = false;
-// 녹음 데이터 저장 변수
-let mediaRecorder = null;
+let mediaRecorder = null; 
 let recordedChunks = [];
 
-function loadMeetingData() {
-  try {
-    const stored = localStorage.getItem('currentMeeting');
-    if (stored) {
-      meetingData = JSON.parse(stored);
-      displayMeetingInfo();
+async function loadMeetingData() {
+    try {
+        const meetingId = localStorage.getItem("currentMeetingId");
+
+        // meetingId가 없으면 스킵
+        if (!meetingId) {
+            console.warn("회의 ID가 없습니다. 로컬 데이터 사용");
+            const stored = localStorage.getItem('currentMeeting');
+            if (stored) meetingData = JSON.parse(stored);
+            displayMeetingInfo();
+            return;
+        }
+
+        // Spring API 호출
+        const res = await fetch(`http://localhost:8080/api/meetings/${meetingId}`);
+        if (!res.ok) throw new Error("회의 정보 불러오기 실패");
+
+        meetingData = await res.json();
+        displayMeetingInfo();
+        
+    } catch (e) {
+        console.error('회의 데이터 로드 실패:', e);
+        showErrorMessage("서버에서 회의 정보를 불러올 수 없습니다.");
     }
-  } catch (e) {
-    console.error('회의 데이터 로드 실패:', e);
-  }
 }
 
 function displayMeetingInfo() {
@@ -418,7 +431,7 @@ pauseBtn.addEventListener('click', async () => {
 
 
 /* ===============================
-   회의 종료 기능
+   회의 종료 -> Spring
 =================================*/
 endBtn.addEventListener('click', () => {
   if (!isRecording) return;
@@ -426,34 +439,11 @@ endBtn.addEventListener('click', () => {
   openConfirmModal(
     '회의 종료',
     '회의를 종료하시겠습니까?<br>종료하면 회의록 페이지로 이동합니다.',
-    () => {
-      // 사용자가 “확인”을 눌렀을 때 실행되는 코드
+    async () => {
       clearInterval(timerInterval);
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-        mediaRecorder.onstop = () => {
-          if (recordedChunks.length === 0) {
-            showErrorMessage('녹음 데이터가 없습니다.');
-            return;
-          }
-          const blob = new Blob(recordedChunks, { type: "audio/webm" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `meeting_audio_${Date.now()}.webm`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          showSuccessMessage('녹음 파일이 다운로드되었습니다.');
-        };
-      }
 
-      //   const finalMeetingData = {
-      //     ...meetingData,
-      //     duration: timerSeconds,
-      //     endTime: new Date().toISOString()
-      //   };
+      // 녹음 중단
+      if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
 
       const finalMeetingData = {
         ...meetingData,
@@ -466,12 +456,27 @@ endBtn.addEventListener('click', () => {
         }))
       };
 
-      localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
+      try {
+        // 회의 종료 API 호출
+        const meetingId = localStorage.getItem("currentMeetingId");
+        const res = await fetch(`http://localhost:8080/api/meetings/${meetingId}/finish`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(finalMeetingData)
+        });
 
-      //   localStorage.setItem('lastMeeting', JSON.stringify(finalMeetingData));
-      localStorage.removeItem('currentMeeting');
-      stopMicVisualizer();
-      window.location.href = 'recordFinish.html';
+        if (!res.ok) throw new Error("회의 종료 실패");
+        const result = await res.json();
+
+        showSuccessMessage("회의가 저장되었습니다!");
+        localStorage.removeItem("currentMeeting");
+        localStorage.removeItem("currentMeetingId");
+        window.location.href = 'recordFinish.html';
+
+      } catch (err) {
+        console.error("회의 종료 중 오류:", err);
+        showErrorMessage("회의 데이터를 서버에 저장하지 못했습니다.");
+      }
     }
   );
 });
@@ -494,40 +499,61 @@ function updateTranscriptCount() {
   transcriptCountEl.textContent = `${transcriptCount}개 발화`;
 }
 
-// 새 발화 추가 함수
-function addTranscript(speakerName, text) {
-  const item = document.createElement('div');
-  item.className = 'transcript-item';
+/* ===============================
+   실시간 발화 저장 -> Spring
+=================================*/
 
-  const timestamp = formatTime(timerSeconds);
-
-  // 키워드 하이라이트 적용
-  let highlightedText = text;
-  if (meetingData && meetingData.keywords) {
-    meetingData.keywords.forEach((keyword, index) => {
-      const regex = new RegExp(`(${keyword})`, 'gi');
-      const colorClass = `keyword-highlight-${index % 6}`; // 6가지 색상 반복
-      highlightedText = highlightedText.replace(regex, `<mark class="${colorClass}">$1</mark>`);
-    });
-  }
-
-  item.innerHTML = `
+async function addTranscript(speakerName, text) {
+    const item = document.createElement('div');
+    item.className = 'transcript-item';
+    
+    const timestamp = formatTime(timerSeconds);
+    
+    // 키워드 하이라이트 적용
+    let highlightedText = text;
+    if (meetingData && meetingData.keywords) {
+        meetingData.keywords.forEach((keyword, index) => {
+            const regex = new RegExp(`(${keyword})`, 'gi');
+            const colorClass = `keyword-highlight-${index % 6}`; // 6가지 색상 반복
+            highlightedText = highlightedText.replace(regex, `<mark class="${colorClass}">$1</mark>`);
+        });
+    }
+    
+    item.innerHTML = `
         <div class="transcript-meta">
             <span class="speaker-name">${speakerName}</span>
             <span class="transcript-time">${timestamp}</span>
         </div>
         <div class="transcript-text">${highlightedText}</div>
     `;
+    
+    transcriptContent.appendChild(item);
+    transcriptCount++;
+    updateTranscriptCount();
+    scrollToBottom();
+    
+    // 키워드 알림 체크
+    if (meetingData && meetingData.keywords) {
+        checkKeywords(text, timestamp, speakerName);
+    }
 
-  transcriptContent.appendChild(item);
-  transcriptCount++;
-  updateTranscriptCount();
-  scrollToBottom();
-
-  // 키워드 알림 체크
-  if (meetingData && meetingData.keywords) {
-    checkKeywords(text, timestamp, speakerName);
-  }
+    // 서버 전송 (선택)
+    try {
+        const meetingId = localStorage.getItem("currentMeetingId");
+        if (meetingId) {
+            await fetch(`http://localhost:8080/api/meetings/${meetingId}/transcripts`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    speaker: speakerName,
+                    text: text,
+                    timestamp: new Date().toISOString()
+                })
+            });
+        }
+    } catch (err) {
+        console.error("서버에 발화 저장 실패:", err);
+    }
 }
 
 /* ===============================

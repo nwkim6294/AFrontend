@@ -1,3 +1,54 @@
+/* ===============================
+   Chatbot & Sidebar Fetch
+=================================*/
+document.addEventListener("DOMContentLoaded", () => {
+    // 챗봇 로드
+    fetch("components/chatbot.html")
+        .then(res => res.text())
+        .then(html => {
+            const container = document.getElementById("chatbot-container");
+            container.innerHTML = html;
+
+            const closeBtn = container.querySelector(".close-chat-btn");
+            const sendBtn = container.querySelector(".send-btn");
+            const chatInput = container.querySelector("#chatInput");
+            const floatingBtn = document.getElementById("floatingChatBtn");
+
+            if (closeBtn) closeBtn.addEventListener("click", closeChat);
+            if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+            if (chatInput) chatInput.addEventListener("keypress", handleChatEnter);
+            if (floatingBtn) floatingBtn.addEventListener("click", openChat);
+        });
+    
+    // 사이드바 로드
+    fetch("components/sidebar.html")
+        .then(res => res.text())
+        .then(html => {
+            const sidebar = document.getElementById("sidebar-container");
+            sidebar.innerHTML = html;
+
+            // ✅ 사이드바 로드 후 사용자 정보 주입
+            loadCurrentUser();
+
+            // 현재 페이지 활성화
+            const currentPage = window.location.pathname.split("/").pop();
+            const navItems = sidebar.querySelectorAll(".nav-menu a");
+
+            navItems.forEach(item => {
+                const linkPath = item.getAttribute("href");
+                if (linkPath === currentPage) {
+                    item.classList.add("active");
+                } else {
+                    item.classList.remove("active");
+                }
+            });
+        })
+        .catch(error => {
+            console.error('사이드바 로드 실패:', error);
+        });
+});
+
+
 // localStorage 키
 const STORAGE_KEY = 'calendar_events';
 const TODO_STORAGE_KEY = 'calendar_todos';
@@ -291,7 +342,7 @@ window.refreshHomeData = function() {
 };
 
 // 홈 페이지 초기화
-function initHome() {
+async function initHome() {
     console.log('🏠 홈 페이지 초기화 시작');
     console.log('📅 오늘 날짜:', formatDateString(todayOnlyDate));
     
@@ -309,9 +360,11 @@ function initHome() {
     renderHomeTodoList(globalEvents, globalTodos);
     renderImportantMeetings(globalEvents);
     renderRecentMeetings(globalEvents);
-    // 로그인 시 유저 이름 표시
-    saveUserFromJwt(); // 소셜로그인시 사이드바부분 사용자명,이메일 표시
-    displayUserName(); //  여기에 추가
+
+    // 사용자 정보 비동기로 가져와서 표시됨
+    const user = await loadCurrentUser();
+    console.log("✅ 불러온 사용자 정보:", user);
+
     console.log('✅ 홈 페이지 초기화 완료');
 }
 
@@ -343,58 +396,58 @@ function goToMeetings() {
     window.location.href = 'meetings.html';
 }
 
-// 유저 이름 표시 기능 추가 364,365,379~430 번째 줄까지
-function getCookie(name) {
-  const cookies = document.cookie.split(";").map(c => c.trim());
-  for (const cookie of cookies) {
-    if (cookie.startsWith(name + "=")) {
-      return cookie.substring(name.length + 1);
-    }
-  }
-  return null;
-}
-// 한글 compatible JWT 디코딩 함수 사용
-function parseJwt(token) {
+// 사용자 정보 로드 함수 (API에서만)
+async function loadCurrentUser() {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-  } catch (e) { return null; }
+    const response = await fetch('http://localhost:8080/api/auth/me', {
+      credentials: 'include'  // 이 옵션만 있으면 브라우저가 HttpOnly 쿠키를 요청에 자동 포함!
+    });
+    if (response.ok) {
+      const user = await response.json();
+      displayUserName(user);
+      return user;
+    } else if (response.status === 401) {
+      window.location.href = '/login.html';
+      return null;
+    } else {
+      displayUserName(null);
+      return null;
+    }
+  } catch (error) {
+    console.error('네트워크 오류', error);
+    displayUserName(null);
+    return null;
+  }
 }
 
-function displayUserName() {
-  // 1. localStorage 우선, 없으면 JWT 쿠키 사용
-  let user = null;
-  const userData = localStorage.getItem("user");
-  if (userData) {
-    try { user = JSON.parse(userData); } catch(e) { user = null; }
-  } else {
-    // localStorage에 없으면 jwt 쿠키에서 email, name 등 추출
-    const token = getCookie('jwt');
-    if (token) {
-      const payload = parseJwt(token);
-      if (payload) {
-        user = {
-          name: payload.name || payload.email || payload.sub || "사용자",
-          email: payload.email || ""
-        };
-      }
-    }
-  }
-  // 화면에 출력
-  const nameElement = document.querySelector("#user-name");
-  if (user && nameElement) {
-    console.log(user);
-    nameElement.textContent = user.name;
-    console.log("✅ 로그인 사용자 표시:", user.name);
-  } else {
-    console.warn("ℹ️ 로그인 정보 없음, 로그인 페이지로 이동");
-    // window.location.href = "login.html";
-  }
+// 사용자 이름 표시
+function displayUserName(user) {
+    // 메인 헤더
+    const nameElement = document.querySelector("#user-name");
+    if (nameElement)
+        nameElement.textContent = (user && user.name) || (user && user.email) || '사용자';
+
+    // 사이드바 이름
+    document.querySelectorAll(".user-name").forEach(el => {
+        el.textContent = (user && user.name) || (user && user.email) || '사용자';
+    });
+
+    // 사이드바 이메일
+    document.querySelectorAll(".user-email").forEach(el => {
+        el.textContent = (user && user.email) || '';
+    });
+
+    // 사이드바 아바타 (선택)
+    document.querySelectorAll(".user-avatar").forEach(el => {
+        el.textContent = (user && user.name) ? user.name.charAt(0).toUpperCase() : "U";
+    });
 }
+
+// DOMContentLoaded 시 초기화
+document.addEventListener('DOMContentLoaded', () => {
+    loadCurrentUser();
+    initHome();
+});
 
 // localStorage 변경 감지
 window.addEventListener('storage', (e) => {
@@ -404,14 +457,7 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-// 페이지 로드 시 초기화
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHome);
-} else {
-    initHome();
-}
-
-// 회의록 관리 페이지로 이동
+// 회의록 관리 페이지 이동 함수
 function goToMeetings() {
-    window.location.href = 'meetings.html';  // 회의록 관리 페이지 경로
+    window.location.href = 'meetings.html';
 }

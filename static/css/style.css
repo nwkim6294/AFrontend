@@ -741,6 +741,7 @@ body.chat-open .main-content {
 
 /* collapsed 상태에서 드롭다운 위치 조정 */
 .sidebar.collapsed .profile-dropdown {
+  position: fixed;
   left: 60px;
   right: auto;
   bottom: 12px;
@@ -796,8 +797,8 @@ body.chat-open .main-content {
 }
 
 .sidebar.collapsed .auth-btn:hover {
-  background: #ffffff;
-  border-color: #ffffff;
+  background: none;
+  border-color: none;
 }
 
 .sidebar.collapsed .user-info {

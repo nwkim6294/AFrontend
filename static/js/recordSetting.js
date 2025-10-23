@@ -163,7 +163,7 @@ function handleChatEnter(e) {
 }
 
 /* ===============================
-   공통 메시지 함수
+공통 메시지 함수
 =================================*/
 function showSuccessMessage(message) {
     const existing = document.querySelector('.success-message');
@@ -245,12 +245,12 @@ let audioContext = null;
 let analyser = null;
 let microphone = null;
 let javascriptNode = null;
-let micStream = null;
+let micStream = null; // 추가: 실제 오디오 스트림 참조용
 
 document.getElementById('micTestBtn').addEventListener('click', async function() {
     if (!isTesting) {
         try {
-            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); // 전역에 저장
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             analyser = audioContext.createAnalyser();
             microphone = audioContext.createMediaStreamSource(micStream);
@@ -285,10 +285,12 @@ document.getElementById('micTestBtn').addEventListener('click', async function()
             showErrorMessage('마이크 접근 권한이 필요합니다');
         }
     } else {
+        // 오디오 리소스 정리
         if (microphone) microphone.disconnect();
         if (javascriptNode) javascriptNode.disconnect();
         if (audioContext) audioContext.close();
 
+        // 여기 추가: 실제 마이크 사용 중단
         if (micStream) {
             micStream.getTracks().forEach(track => track.stop());
             micStream = null;
@@ -309,6 +311,7 @@ document.getElementById('micTestBtn').addEventListener('click', async function()
         showSuccessMessage('마이크 테스트가 종료되었습니다');
     }
 });
+
 
 /* ===============================
    참석자 추가/삭제
@@ -375,15 +378,69 @@ document.querySelectorAll('.remove-keyword-btn').forEach(btn => {
 });
 
 /* ===============================
-   회의 시작 / 취소
+   회의 시작 / 취소 (수정된 버전)
+=================================*/
+// document.querySelector('.btn-primary').addEventListener('click', () => {
+//     const title = document.getElementById('meeting-title');
+//     const date = document.getElementById('meeting-date');
+
+//     title.classList.remove('error');
+//     date.classList.remove('error');
+
+//     if (!title.value.trim()) {
+//         title.classList.add('error');
+//         showErrorMessage('회의 제목을 입력해주세요');
+//         return;
+//     }
+//     if (!date.value) {
+//         date.classList.add('error');
+//         showErrorMessage('회의 일시를 선택해주세요');
+//         return;
+//     }
+
+//     // 회의 데이터 수집
+//     const participants = [];
+//     document.querySelectorAll('.participant-item').forEach(item => {
+//         participants.push(item.querySelector('.participant-name').textContent);
+//     });
+
+//     const keywords = [];
+//     document.querySelectorAll('.keyword-tag').forEach(tag => {
+//         const text = tag.textContent.replace('✕', '').trim();
+//         keywords.push(text);
+//     });
+
+//     const meetingData = {
+//         title: title.value.trim(),
+//         date: date.value,
+//         description: document.getElementById('meeting-description').value.trim(),
+//         participants: participants,
+//         keywords: keywords
+//     };
+
+//     // LocalStorage에 저장
+//     localStorage.setItem('currentMeeting', JSON.stringify(meetingData));
+
+//     showSuccessMessage('회의가 시작됩니다!');
+    
+//     // 1초 후에 페이지 이동
+//     setTimeout(() => {
+//         window.location.href = 'recording.html';
+//     }, 1000);
+// });
+
+/* ===============================
+   회의 시작 / 취소 (Spring 연결 버전)
 =================================*/
 document.querySelector('.btn-primary').addEventListener('click', () => {
     const title = document.getElementById('meeting-title');
     const date = document.getElementById('meeting-date');
 
+    // 에러 표시 초기화
     title.classList.remove('error');
     date.classList.remove('error');
 
+    // 필수값 검증
     if (!title.value.trim()) {
         title.classList.add('error');
         showErrorMessage('회의 제목을 입력해주세요');
@@ -415,22 +472,41 @@ document.querySelector('.btn-primary').addEventListener('click', () => {
         keywords: keywords
     };
 
-    // LocalStorage에 저장
-    localStorage.setItem('currentMeeting', JSON.stringify(meetingData));
+    console.log("📤 서버로 보낼 회의 데이터:", meetingData);
 
-    showSuccessMessage('회의가 시작됩니다!');
-    
-    setTimeout(() => {
-        window.location.href = 'recording.html';
-    }, 1000);
+    // Spring Boot API로 전송
+    fetch("http://localhost:8080/api/meetings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(meetingData)
+    })
+    .then(res => {
+        if (!res.ok) {
+            throw new Error(`HTTP 오류: ${res.status}`);
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log("📥 서버 응답:", data);
+        if (data.success) {
+            showSuccessMessage(data.message || '회의가 성공적으로 생성되었습니다!');
+            // 회의 ID를 localStorage에 저장 (선택 사항)
+            if (data.meetingId) {
+                localStorage.setItem("currentMeetingId", data.meetingId);
+            }
+            // 페이지 이동
+            setTimeout(() => {
+                window.location.href = 'recording.html';
+            }, 1000);
+        } else {
+            showErrorMessage('회의 생성 실패: ' + (data.message || '서버 오류'));
+        }
+    })
+    .catch(err => {
+        console.error("❌ 서버 요청 실패:", err);
+        showErrorMessage('서버와 통신할 수 없습니다. (백엔드 실행 중인지 확인하세요)');
+    });
 });
-
-document.querySelector('.btn-secondary').addEventListener('click', () => {
-    if (confirm('입력한 내용이 저장되지 않습니다. 취소하시겠습니까?')) {
-        window.history.back();
-    }
-});
-
 /* ===============================
    기본 날짜 설정
 =================================*/
